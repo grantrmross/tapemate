@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>TapeMate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Bebas+Neue&family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Bebas+Neue&family=Cinzel:wght@500;700&family=Inter:wght@200;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* Layout: one column of setup cards; the take runs full-screen with the script as a prompter over the camera. Deliberately single dark look (a booth, not a page). */
 :root{
@@ -256,7 +256,23 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
 .prompter .next{font-family:var(--f-script);font-size:14px;color:var(--muted);border-top:1px solid rgba(255,255,255,.12);padding-top:6px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prompter.hidden-text .line{filter:blur(9px)}
 .spacer{flex:1}
-.countdown{position:absolute;inset:0;display:grid;place-items:center;z-index:3;font-family:var(--f-script);font-weight:700;font-size:min(40vw,220px);color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.6);pointer-events:none}
+/* countdown: a small strip near the bottom, like a pro camera, plus a faint framing guide, so nothing covers your face */
+.countdown{position:absolute;inset:0;z-index:3;pointer-events:none;font-family:"Inter",system-ui,sans-serif}
+.cdframe{position:absolute;top:calc(64px + env(safe-area-inset-top));bottom:calc(196px + env(safe-area-inset-bottom));left:50%;width:min(84%,calc((100dvh - 260px) * .75));transform:translateX(-50%);border:1px solid rgba(255,255,255,.35);border-radius:8px}
+@media (orientation:landscape){.cdframe{width:min(76%,calc((100dvh - 260px) * 1.78))}}
+.cdframe::before,.cdframe::after{content:"";position:absolute;left:50%;top:50%;background:rgba(255,255,255,.5)}
+.cdframe::before{width:16px;height:1px;margin-left:-8px}
+.cdframe::after{width:1px;height:16px;margin-top:-8px}
+.cdstrip{position:absolute;left:50%;bottom:calc(122px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:10px 18px;border-radius:14px;background:rgba(10,10,12,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;white-space:nowrap}
+.cddot{width:9px;height:9px;border-radius:50%;background:var(--rec);box-shadow:0 0 0 3px color-mix(in srgb,var(--rec) 28%,transparent)}
+.cdlab{font-size:11px;letter-spacing:.24em;font-weight:500;color:#d6d8dc}
+.cdnum{font-weight:200;font-size:40px;line-height:1;font-variant-numeric:tabular-nums;min-width:26px;text-align:center}
+.cdnum.tick{animation:cdIn .35s ease-out}
+@keyframes cdIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.cdsegs{display:flex;gap:4px}
+.cdsegs b{width:16px;height:4px;border-radius:2px;background:rgba(255,255,255,.22);transition:background .3s}
+.cdsegs b.on{background:var(--rec)}
+@media (prefers-reduced-motion:reduce){.cdnum.tick{animation:none}}
 .controls{position:relative;z-index:2;display:flex;justify-content:center;align-items:center;gap:14px;padding:14px max(14px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .ctl{width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:20px}
 .ctl.main{width:74px;height:74px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-size:15px;font-weight:700}
@@ -930,7 +946,10 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <div class="next" id="pNext"></div>
   </div>
   <div class="spacer"></div>
-  <div class="countdown" id="countdown" hidden></div>
+  <div class="countdown" id="countdown" hidden>
+    <div class="cdframe" aria-hidden="true"></div>
+    <div class="cdstrip" role="timer" aria-live="polite"><span class="cddot" aria-hidden="true"></span><span class="cdlab" id="cdLab">REC IN</span><span class="cdnum" id="cdNum">5</span><span class="cdsegs" id="cdSegs" aria-hidden="true"></span></div>
+  </div>
   <div class="flash" id="flash"></div>
   <div class="endcard" id="endcard" hidden>End of scene</div>
   <div class="readycard" id="readyCard" hidden role="status"><b id="readyTitle">Get into position</b><span>Tap <i class="rdot"></i> REC when you're ready. You'll have 5 seconds to get into position before recording starts.</span></div>
@@ -2308,8 +2327,9 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   // A real take waits on the camera screen until the actor taps REC, then counts down 5 seconds
   // so they can get into position. Rehearsing without recording starts after a short 3.
   const me = run;
+  let kept = null;
   if (recording){
-    const kept = ["#bBack", "#bNext", "#bLine"].map(q => [q, $(q).hidden]);
+    kept = ["#bBack", "#bNext", "#bLine"].map(q => [q, $(q).hidden]);
     kept.forEach(([q]) => $(q).hidden = true);
     $("#readyTitle").textContent = rehearse ? "Mock take" : key ? shotLabel(key) : "Ready";
     $("#readyCard").hidden = false; $("#bRoll").hidden = false;
@@ -2319,19 +2339,19 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     await new Promise(res => { run.roll = res; });
     if (run !== me) return;            // they closed the take instead
     run.roll = null; qMenu(false); $("#qPick").disabled = true;
-    kept.forEach(([q, h]) => $(q).hidden = h);
-    $("#readyCard").hidden = true; $("#bRoll").hidden = true;
-    $("#stage").classList.remove("ready"); $("#bStop").setAttribute("aria-label", "Stop");
+    $("#readyCard").hidden = true; $("#bRoll").hidden = true;   // the ✕ stays until recording starts
   }
   run.turn = null;
   const cd = $("#countdown"); cd.hidden = false;
   const samples = [];
   for (let n = recording ? 5 : 3; n > 0; n--){
-    cd.textContent = n; setStatus(recording ? "Recording starts in " + n : "Quiet for a moment");
+    showCount(n, recording ? 5 : 3, recording ? "REC IN" : "STARTING IN"); setStatus(recording ? "Recording starts in " + n : "Quiet for a moment");
     const t0 = performance.now(); while (performance.now()-t0 < 1000){ samples.push(readLevel()); await sleep(50); }
     if (run !== me) return;
   }
   cd.hidden = true;
+  if (kept) kept.forEach(([q, h]) => $(q).hidden = h);   // NEXT and back come back once it's rolling
+  $("#stage").classList.remove("ready"); $("#bStop").setAttribute("aria-label", "Stop");
   if (samples.length){ samples.sort((a,b)=>a-b); floor = Math.max(0.004, samples[Math.floor(samples.length*0.6)]); }
   if (recording) startRecorder();
   if (mode === "intro"){
@@ -2346,7 +2366,7 @@ async function snap(){
   if (!run || run.snapping) return;
   run.snapping = true;
   const cd = $("#countdown"); cd.hidden = false;
-  for (let n=3;n>0;n--){ cd.textContent = n; await sleep(1000); if (!run) return; }
+  for (let n=3;n>0;n--){ showCount(n, 3, "PHOTO IN"); await sleep(1000); if (!run) return; }
   cd.hidden = true;
   const v = $("#cam");
   const c = document.createElement("canvas"); c.width = v.videoWidth || 1280; c.height = v.videoHeight || 720;
@@ -3230,6 +3250,15 @@ $("#shrink").onclick = async () => {
 $("#shrinkCancel").onclick = () => { if (SHRINK.job){ SHRINK.job.cancelled = true; SHRINK.job.stop && SHRINK.job.stop(); } };
 
 function roll(){ if (run && run.turn === "ready" && run.roll) run.roll(); }
+/* Fills in the countdown strip: the number, its label, and one red segment per second left. */
+function showCount(n, total, label){
+  $("#cdLab").textContent = label;
+  const num = $("#cdNum"); num.textContent = n;
+  num.classList.remove("tick"); void num.offsetWidth; num.classList.add("tick");
+  const segs = $("#cdSegs");
+  if (segs.children.length !== total) segs.innerHTML = "<b></b>".repeat(total);
+  [...segs.children].forEach((b, i) => b.classList.toggle("on", i < n));
+}
 /* Quality from the take screen: same setting as the Quality card. Before REC is tapped the camera
    restarts at the new size; once recording, the chip is only a label. */
 function qMenu(open){
