@@ -89,6 +89,8 @@ a.btn{display:inline-block;text-decoration:none;color:var(--fg)}
 .seg button{flex:1;background:var(--bg);border:0;padding:9px 8px;font-size:13px;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--raise);color:var(--accent);font-weight:700}
+.roombox{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px;background:var(--bg)}
+.subhead{margin:4px 0 -4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--f-ui)}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .voices{display:flex;flex-direction:column;gap:8px}
 .vrow{display:grid;grid-template-columns:110px minmax(0,1fr) auto auto;gap:8px;align-items:center}
@@ -304,6 +306,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
 .prompter.offbook .line .w.hint{color:var(--accent);background:none}
 .prompter.offbook .line .w.hit{color:var(--ok);background:none}
 .ctl.line{font-size:12px;font-weight:700;letter-spacing:.04em}
+.ctl.flip svg{width:26px;height:26px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(110px + env(safe-area-inset-bottom));z-index:20;background:var(--raise);border:1px solid var(--line);padding:10px 16px;border-radius:10px;font-size:14px;max-width:min(90vw,520px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
 
 /* ---------- review ---------- */
@@ -617,7 +620,7 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
   <a href="#rhCard" data-go="rhCard" data-tip="Rehearse" aria-label="Rehearse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></a>
   <a href="#shotsCard" data-go="shotsCard" data-tip="Your takes" aria-label="Your takes"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></a>
   <a href="#libCard" data-go="libCard" data-tip="Library" aria-label="Library"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg></a>
-  <a href="#readerCard" data-go="readerCard" data-tip="Reader voices" aria-label="Reader voices"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 10.5v3"/></svg></a>
+  <a href="#readerCard" data-go="readerCard" data-tip="Reader" aria-label="Reader"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 10.5v3"/></svg></a>
   <a href="#camCard" data-go="camCard" data-tip="Camera and prompter" aria-label="Camera and prompter"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10 6-3.5v11l-6-3.5"/></svg></a>
   <span class="sp"></span>
   <hr>
@@ -845,6 +848,35 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
 
   <section class="card" aria-labelledby="h-reader" id="readerCard">
     <h2 id="h-reader">Reader</h2>
+    <div class="field">
+      <span class="lab">Who reads the other parts in your takes?</span>
+      <div class="seg" id="readerWho">
+        <button type="button" data-v="app">App voices</button>
+        <button type="button" data-v="room">Reader in the room</button>
+      </div>
+      <p class="hint" id="readerWhoHint"></p>
+    </div>
+    <div class="roombox" id="roomBox" hidden>
+      <div class="grid">
+        <div class="field">
+          <span class="lab">On screen while you record</span>
+          <div class="seg" id="roomLines">
+            <button type="button" data-v="none">Nothing</button>
+            <button type="button" data-v="mine">My lines only</button>
+          </div>
+          <p class="hint" id="roomLinesHint"></p>
+        </div>
+        <div class="field">
+          <span class="lab">Camera</span>
+          <div class="seg" id="roomFacing">
+            <button type="button" data-v="user">Front</button>
+            <button type="button" data-v="environment">Back</button>
+          </div>
+          <p class="hint" id="roomFacingHint"></p>
+        </div>
+      </div>
+    </div>
+    <h3 class="subhead" id="appVoicesHead" hidden>App voices, still used when you Rehearse</h3>
     <div class="grid">
       <div class="field">
         <span class="lab">How it knows you've finished a line</span>
@@ -896,6 +928,7 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
           <button type="button" data-v="user">Front</button>
           <button type="button" data-v="environment">Back</button>
         </div>
+        <p class="hint" id="facingHint"></p>
       </div>
       <div class="field">
         <span class="lab">Show on screen</span>
@@ -959,11 +992,12 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
   </div>
   <div class="flash" id="flash"></div>
   <div class="endcard" id="endcard" hidden>End of scene</div>
-  <div class="readycard" id="readyCard" hidden role="status"><b id="readyTitle">Get into position</b><span>Tap <i class="rdot"></i> REC when you're ready. You'll have 5 seconds to get into position before recording starts.</span></div>
+  <div class="readycard" id="readyCard" hidden role="status"><b id="readyTitle">Get into position</b><span id="readyText">Tap <i class="rdot"></i> REC when you're ready. You'll have 5 seconds to get into position before recording starts.</span></div>
   <div class="controls">
     <button class="ctl line" id="bLine" type="button" aria-label="Give me my line" hidden>LINE?</button>
     <button class="ctl" id="bBack" type="button" aria-label="Previous line">◀</button>
     <button class="ctl main" id="bNext" type="button" aria-label="Next line">NEXT</button>
+    <button class="ctl flip" id="bFlip" type="button" aria-label="Switch camera" title="Switch camera" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5h3.2l1.8-2.5h7l1.8 2.5h3.2v10.5h-17z"/><path d="M15.4 11.6a3.6 3.6 0 0 0-6.5.6"/><path d="M15.6 9.9v1.9h-1.9"/><path d="M8.6 15.4a3.6 3.6 0 0 0 6.5-.6"/><path d="M8.4 17.1v-1.9h1.9"/></svg></button>
     <button class="ctl roll" id="bRoll" type="button" aria-label="Start recording, after a 5 second countdown" hidden><i></i><span>REC</span></button>
     <button class="ctl stop" id="bStop" type="button" aria-label="Stop"><i></i></button>
   </div>
@@ -1312,6 +1346,7 @@ Partners. Now go get the keys before I come to my senses.
 
 /* ---------- settings ---------- */
 const DEF = {cue:null, audio:"headphones", silence:1300, rate:1, lang:"", facing:"user", prompt:"all", tail:"3", quality:"auto", voicePick:{},
+             reader:"app", roomLines:"none",
              rhMode:"lines", rhOff:"show", rhStall:"4000", rhLoop:"once"};
 let S = Object.assign({}, DEF);
 try { Object.assign(S, JSON.parse(localStorage.getItem("tm.settings")||"{}")); } catch(e){}
@@ -2065,13 +2100,38 @@ seg("#cueMode","cue", v => {
     tap: "Tap NEXT, tap the script, or press the space bar when your line is done. The reader handles its lines by itself."
   }[v] + (!canSR && v!=="tap" ? " (Speech recognition isn't available in this browser.)" : "");
   try { renderRehearseHints(); } catch(e){ /* first run */ }
+  try { roomLinesHint(); } catch(e){ /* before the room box is set up */ }
 });
 seg("#audioMode","audio", v => {
   $("#audioHint").textContent = v==="headphones"
     ? "Wear headphones. You hear the reader, the recording only has you. Most casting offices prefer this."
     : "The reader plays through the speaker so the mic records it too, like a live reader in the room. Keep the volume moderate.";
 });
-seg("#facing","facing");
+/* Front or back camera: the same setting shows in the Camera card and in the Reader-in-the-room box. */
+const facingHint = v => v === "environment"
+  ? "Back camera: a sharper picture. Turn the screen to your reader so they can frame you and watch the take."
+  : "Front camera: you can see yourself on screen while you act.";
+function syncFacing(v){
+  ["#facing", "#roomFacing"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === v))));
+  $("#facingHint").textContent = $("#roomFacingHint").textContent = facingHint(v);
+}
+seg("#facing","facing", syncFacing);
+seg("#roomFacing","facing", syncFacing);
+/* Who reads the other parts in a take: the app's voices, or a real person behind the camera. */
+const roomTake = (mode, recording, rehearse) => mode === "scene" && recording && !rehearse && S.reader === "room";
+function roomLinesHint(){
+  $("#roomLinesHint").textContent = S.roomLines === "mine"
+    ? "Only your lines come up, one at a time. Tap the screen or NEXT after each one, or press the space bar." + (S.cue === "words" && canSR ? " With \u201cListens to words\u201d on, it also moves on when it hears you finish." : "")
+    : "A clear screen: just you, the camera and your reader. Tap \u25A0 when the scene's done.";
+}
+seg("#readerWho","reader", v => {
+  const room = v === "room";
+  $("#roomBox").hidden = !room; $("#appVoicesHead").hidden = !room;
+  $("#readerWhoHint").textContent = room
+    ? "Someone reads the other characters from behind the camera. The app stays silent and puts none of their lines on screen. Ask your reader to stand close to the camera and read a little softer than you."
+    : "The app reads the other characters with the voices below.";
+});
+seg("#roomLines","roomLines", roomLinesHint);
 seg("#prompt","prompt");
 seg("#tail","tail");
 seg("#quality","quality", () => { try { renderQuality(); } catch(e){ /* before the shot list exists */ } });
@@ -2241,13 +2301,14 @@ function startRec(){
   try {
     rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = langOf(); rec.maxAlternatives = 1;
     rec.onresult = e => {
-      if (!run || run.turn !== "actor") return;
-      let interim = "";
+      if (!run || (run.turn !== "actor" && run.turn !== "room")) return;
+      let interim = "", fin = false;
       for (let i=e.resultIndex;i<e.results.length;i++){
         const r = e.results[i];
-        if (r.isFinal) finalBuf += " " + r[0].transcript; else interim += " " + r[0].transcript;
+        if (r.isFinal){ finalBuf += " " + r[0].transcript; fin = true; } else interim += " " + r[0].transcript;
       }
       interimBuf = interim; lastResultAt = performance.now();
+      if (run.turn === "room") return roomHeard(fin);
       evaluateActor();
     };
     rec.onerror = e => {
@@ -2295,6 +2356,8 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   if (mode === "scene" && (!LINES.length || !ME)) return;
   curKind = mode; curShot = key;
   const still = mode !== "scene";
+  const room = roomTake(mode, recording, rehearse);   // a person reads the other parts: no app voice, no reader lines
+  $("#bFlip").hidden = true;
   const wantVideo = !(rehearse && RH.mode === "lines");
   $("#stage").classList.toggle("nocam", !wantVideo);
   $("#bLine").hidden = !(rehearse && RH.offbook);
@@ -2304,7 +2367,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   $("#bNext").setAttribute("aria-label", mode === "headshot" ? "Take photo" : "Next line");
   $("#prompter").hidden = true;
   // Unlock speech on iOS: must be inside the tap.
-  if (canTTS && mode === "scene"){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }
+  if (canTTS && mode === "scene" && !room){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }
   $("#setup").hidden = true; $("#review").hidden = true; $("#editor").hidden = true; $("#rehearsal").hidden = true; $("#stage").hidden = false;
   $("#endcard").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true;
   $("#recpill").classList.remove("on");
@@ -2325,12 +2388,18 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
            : mode === "headshot" ? {facingMode: S.facing, width:{ideal:1920}, height:{ideal:1080}}
            : recording ? {facingMode: S.facing, width:{ideal:TIERS[recPlan(qKey).tier].w}, height:{ideal:TIERS[recPlan(qKey).tier].h}, frameRate:{ideal:30, max:30}}
            : {facingMode:S.facing},
-      audio: needMic ? {echoCancellation: S.audio === "headphones", noiseSuppression:false, autoGainControl:false} : false
+      audio: needMic ? {echoCancellation: !room && S.audio === "headphones", noiseSuppression:false, autoGainControl:false} : false
     });
   } catch(e){
     if (recording || mode === "headshot"){ exitStage(); showProblem(explainError(e)); return; }
     stream = null; toast(wantVideo ? "The camera and mic didn't start, so tap NEXT when each of your lines is done." : "The mic didn't start, so tap NEXT when each of your lines is done.", 6000);
   }
+  // Phones have a front and a back camera: offer the flip button on the take screen.
+  camCount = 0;
+  if (stream && stream.getVideoTracks().length){
+    try { camCount = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === "videoinput").length; } catch(e){}
+  }
+  $("#bFlip").setAttribute("aria-label", S.facing === "user" ? "Switch to the back camera" : "Switch to the front camera");
   // Settle the bitrate for this take now that we know what the camera actually gives.
   REC = null;
   if (recording && stream){
@@ -2354,11 +2423,12 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   try { await cam.play(); } catch(e){}
   if (stream && stream.getAudioTracks().length) startLevel(stream);
   try { run && run.wake && run.wake.release(); } catch(e){}
-  run = {idx: rehearse ? RH.from : startIdx, turn:null, token:0, recording, wake:null, ended:false, rehearse, score:{}, hint:0, hintAt:0, args:[recording, mode, key, rehearse]};
+  run = {idx: rehearse ? RH.from : startIdx, turn:null, token:0, recording, wake:null, ended:false, rehearse, score:{}, hint:0, hintAt:0, args:[recording, mode, key, rehearse], room};
   try { run.wake = await navigator.wakeLock.request("screen"); } catch(e){}
   levelLoop();
   if (mode === "headshot"){
     run.turn = "headshot";
+    $("#bFlip").hidden = camCount < 2;
     setStatus("Frame your headshot, then tap SNAP");
     return;
   }
@@ -2370,14 +2440,19 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     kept = ["#bBack", "#bNext", "#bLine"].map(q => [q, $(q).hidden]);
     kept.forEach(([q]) => $(q).hidden = true);
     $("#readyTitle").textContent = rehearse ? "Mock take" : key ? shotLabel(key) : "Ready";
-    $("#readyCard").hidden = false; $("#bRoll").hidden = false;
+    const go5 = "You'll have 5 seconds to get into position before recording starts.";
+    $("#readyText").innerHTML = room
+      ? `Reader in the room. Tap <i class="rdot"></i> REC when you're both ready. ${go5}`
+        + (S.roomLines === "mine" && S.facing === "environment" ? " The screen faces your reader, so your lines won't be in front of you." : "")
+      : `Tap <i class="rdot"></i> REC when you're ready. ${go5}`;
+    $("#readyCard").hidden = false; $("#bRoll").hidden = false; $("#bFlip").hidden = camCount < 2;
     $("#stage").classList.add("ready"); $("#bStop").setAttribute("aria-label", "Close without recording");
     run.turn = "ready";
     setStatus("Ready");
     await new Promise(res => { run.roll = res; });
     if (run !== me) return;            // they closed the take instead
     run.roll = null; qMenu(false); $("#qPick").disabled = true;
-    $("#readyCard").hidden = true; $("#bRoll").hidden = true;   // the ✕ stays until recording starts
+    $("#readyCard").hidden = true; $("#bRoll").hidden = true; $("#bFlip").hidden = true;   // the ✕ stays until recording starts
   }
   run.turn = null;
   const cd = $("#countdown"); cd.hidden = false;
@@ -2397,12 +2472,69 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     setStatus("Introduction. Tap ■ when you're done");
     return;
   }
+  if (room) return startRoom();
   startRec();
   goTo(run.idx);
 }
+/* ---------- reader in the room ---------- */
+// A real person reads the other parts from behind the camera. The app speaks nothing and shows none
+// of the other characters' lines: either a clear screen, or only your own lines, one at a time.
+let camCount = 0;
+function startRoom(){
+  const mine = S.roomLines === "mine";
+  $("#bBack").hidden = $("#bNext").hidden = !mine;
+  if (!mine){
+    run.turn = "free"; $("#prompter").hidden = true;
+    setStatus("Reader in the room · tap ■ when the scene's done");
+    return;
+  }
+  startRec();
+  roomTo(run.idx, 1);
+}
+/* Moves to your next (dir 1) or previous (dir -1) line, skipping everyone else's. */
+function roomTo(i, dir){
+  if (!run) return;
+  let j = i;
+  while (j >= 0 && j < LINES.length && LINES[j].who !== ME) j += dir;
+  if (j < 0) return;                        // nothing earlier: stay where you are
+  if (j >= LINES.length) return roomEnd();
+  run.token++; run.idx = j; run.turn = "room"; run.ended = false; run.advancing = false;
+  $("#endcard").hidden = true;
+  run.lineW = normWords(LINES[j].spoken); finalBuf = ""; interimBuf = ""; lastResultAt = 0;
+  const l = LINES[j], p = $("#prompter");
+  p.hidden = false; p.classList.add("mine"); p.classList.remove("hidden-text", "offbook");
+  $("#pWho").textContent = `YOU · ${l.who}`;
+  $("#pLine").innerHTML = lineHTML(l.text);
+  let n = j + 1; while (n < LINES.length && LINES[n].who !== ME) n++;
+  $("#pNext").textContent = n < LINES.length ? `Your next line: ${LINES[n].text}` : "Your last line";
+  setStatus(S.cue === "words" && recWanted ? "Your line. Listening" : "Your line. Tap NEXT once you've said it");
+}
+function roomEnd(){
+  run.token++; run.turn = "end"; run.ended = true; stopRec();
+  $("#prompter").hidden = true;
+  const ec = $("#endcard"); ec.hidden = false; ec.textContent = "That was your last line · tap ■ when the scene's done";
+  setStatus("Your last line is done");
+}
+/* With "Listens to words" on, it moves on by itself once it clearly hears the end of your line. */
+function roomHeard(fin){
+  if (!run || run.turn !== "room" || run.advancing) return;
+  const a = align(run.lineW, normWords(finalBuf + " " + interimBuf));
+  paintHits(a.hit);
+  if (fin && a.endReached && a.progress >= 0.85){
+    run.advancing = true; const tk = run.token;
+    setTimeout(() => { if (run && run.token === tk && run.turn === "room") roomTo(run.idx + 1, 1); }, 500);
+  }
+}
+function flipCam(){
+  if (!run || !run.args || (run.turn !== "ready" && run.turn !== "headshot")) return;
+  const v = S.facing === "user" ? "environment" : "user";
+  $(`#facing [data-v="${v}"]`).click();          // saves it and updates both camera pickers
+  const a = run.args;
+  exitStage(true); begin(...a);
+}
 async function snap(){
   if (!run || run.snapping) return;
-  run.snapping = true;
+  run.snapping = true; $("#bFlip").hidden = true;
   const cd = $("#countdown"); cd.hidden = false;
   for (let n=3;n>0;n--){ showCount(n, 3, "PHOTO IN"); await sleep(1000); if (!run) return; }
   cd.hidden = true;
@@ -2539,13 +2671,14 @@ function renderPrompter(i){
   p.classList.toggle("hidden-text", !rh && mine && S.prompt === "cues");
   p.classList.toggle("offbook", off && mine);
   $("#pWho").textContent = mine ? `YOU · ${l.who}${off ? " · OFF-BOOK" : ""}` : l.who;
-  // Wrap spoken words so recognition can light them up; keep parentheticals visible.
-  $("#pLine").innerHTML = lineTokens(l.text).map(x => x.paren ? `<span class="paren">${esc(x.t)}</span>`
-    : x.c ? `<span class="w" data-k="${x.k}" data-c="${x.c}">${esc(x.t)}</span>` : esc(x.t)).join(" ");
+  $("#pLine").innerHTML = lineHTML(l.text);
   const hideNext = nxt && nxt.who === ME && (rh ? off : S.prompt === "cues");
   $("#pNext").textContent = nxt ? `Next · ${nxt.who}: ${hideNext ? "…" : nxt.text}`
     : rh && RH.loop ? `Then back to line ${RH.from + 1}` : rh && last < LINES.length - 1 ? "Last line of this section" : "Last line";
 }
+// Wraps spoken words so recognition can light them up; keeps parentheticals visible.
+const lineHTML = text => lineTokens(text).map(x => x.paren ? `<span class="paren">${esc(x.t)}</span>`
+  : x.c ? `<span class="w" data-k="${x.k}" data-c="${x.c}">${esc(x.t)}</span>` : esc(x.t)).join(" ");
 function setStatus(t){ $("#statusText").textContent = t; }
 
 function endScene(){
@@ -2586,7 +2719,7 @@ function exitStage(stayHidden){
   stopRec(); stopSpeaking(); stopLevel();
   if (stream) stream.getTracks().forEach(t => t.stop());
   stream = null; run = null;
-  $("#stage").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true; $("#countdown").hidden = true;
+  $("#stage").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true; $("#bFlip").hidden = true; $("#countdown").hidden = true;
   $("#stage").classList.remove("ready"); $("#bStop").setAttribute("aria-label", "Stop");
   qMenu(false);
   if (!stayHidden) $("#setup").hidden = false;
@@ -3321,21 +3454,27 @@ $("#qMenu").querySelectorAll("button").forEach(x => x.onclick = e => {
 });
 document.addEventListener("click", e => { if (!$("#qMenu").hidden && !e.target.closest("#qMenu")) qMenu(false); });
 function next(){
-  if (!run || run.ended || run.turn === "slate") return;
+  if (!run || run.ended || run.turn === "slate" || run.turn === "free") return;
   if (run.turn === "ready") return roll();
   if (run.turn === "headshot") return snap();
   if (run.turn === null) return;
+  if (run.turn === "room") return roomTo(run.idx + 1, 1);
   if (run.turn === "loop"){ $("#endcard").hidden = true; return goTo(RH.from); }
   goTo(run.idx + 1);
 }
 function back(){
-  if (!run || run.turn === "slate" || run.turn === "headshot") return;
+  if (!run || run.turn === "slate" || run.turn === "headshot" || run.turn === "free" || run.turn === "ready" || run.turn === null) return;
   if (run.turn === "loop"){ $("#endcard").hidden = true; return goTo(RH.to); }
+  if (run.room){
+    if (run.ended){ run.ended = false; startRec(); return roomTo(LINES.length - 1, -1); }
+    return roomTo(run.idx - 1, -1);
+  }
   if (run.ended){ run.ended = false; $("#endcard").hidden = true; startRec(); return goTo(run.rehearse ? RH.to : LINES.length-1); }
   goTo(run.idx - 1);
 }
 $("#bNext").onclick = next;
 $("#bRoll").onclick = roll;
+$("#bFlip").onclick = flipCam;
 $("#prompter").onclick = next;
 $("#bBack").onclick = back;
 $("#bLine").onclick = () => giveLine(true);
@@ -3687,7 +3826,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidde
 new MutationObserver(() => { if (!$("#stage").hidden) openPop(false); }).observe($("#stage"), {attributes: true, attributeFilter: ["hidden"]});
 
 /* phones: the sidebar becomes a floating bar of the same buttons along the bottom */
-const MNAV_LABEL = {helloCard: "Sheet", rhCard: "Rehearse", shotsCard: "Takes", libCard: "Library", sidesCard: "Sides", readerCard: "Voices", camCard: "Camera", send: "Send"};
+const MNAV_LABEL = {helloCard: "Sheet", rhCard: "Rehearse", shotsCard: "Takes", libCard: "Library", sidesCard: "Sides", readerCard: "Reader", camCard: "Camera", send: "Send"};
 document.querySelectorAll(".rail a[data-go]").forEach(a => {
   const b = a.cloneNode(true);
   b.removeAttribute("data-tip");
@@ -3759,8 +3898,9 @@ function check(){
     [1, "Quality", txt("#qualityNow") || "—"],
     [sp, "All files together", size || "—", sp > 1],
     [sh ? +sh[1] / Math.max(1, +sh[2]) : 0, "Shots recorded", sh ? `${sh[1]} / ${sh[2]}` : "—"],
-    [1, "Reader listens", pressed("#cueMode") || "—"],
-    [1, "Reader audio", pressed("#audioMode") || "—"],
+    ...(S.reader === "room"
+      ? [[1, "Reader", "In the room"], [1, "On screen in takes", pressed("#roomLines") || "—"]]
+      : [[1, "Reader listens", pressed("#cueMode") || "—"], [1, "Reader audio", pressed("#audioMode") || "—"]]),
     [last ? last / 100 : 0, "Last rehearse score", last ? last + "%" : "Not yet"],
   ];
   const cast = [...document.querySelectorAll("#voices .vrow")].map(r => {
@@ -3770,7 +3910,7 @@ function check(){
   const meB = $('#chips [aria-pressed="true"]'); const me = meB && meB.firstChild ? meB.firstChild.textContent.trim() : "";
   const html = rows.map(([p, k, v, over]) => `<div class="crow">${RING(over ? 1.01 : p)}<span>${k}</span><span class="v">${esc(v)}</span></div>`).join("")
     + "|" + (me ? `<div class="cperson"><span class="ini">${esc(me.slice(0, 2))}</span><div><b>${esc(me)}</b><small>You</small></div><span class="tag2">On camera</span></div>` : "")
-    + cast.map(c => `<div class="cperson"><span class="ini">${esc(c.who.slice(0, 2))}</span><div><b>${esc(c.who)}</b><small>${esc(c.v)}</small></div><span class="tag2">Reader</span></div>`).join("");
+    + cast.map(c => `<div class="cperson"><span class="ini">${esc(c.who.slice(0, 2))}</span><div><b>${esc(c.who)}</b><small>${esc(S.reader === "room" ? "Read in the room" : c.v)}</small></div><span class="tag2">Reader</span></div>`).join("");
   if (html === lastCheck) return; lastCheck = html;
   const [a, b] = html.split("|");
   $("#checkRows").innerHTML = a;
