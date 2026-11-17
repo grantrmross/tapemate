@@ -68,6 +68,11 @@ a.btn{display:inline-block;text-decoration:none;color:var(--fg)}
 .chip small{font-family:var(--f-ui);font-weight:400;color:var(--muted);margin-left:6px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .chip[aria-pressed="true"] small{color:var(--accent-ink)}
+.chipwrap{display:inline-flex;align-items:stretch}
+.chipwrap .chip:not(:last-child){border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}
+.chipx{border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:0 var(--r-btn) var(--r-btn) 0;padding:0 11px;font-size:18px;line-height:1;cursor:pointer}
+.chipx:hover,.chipx:focus-visible{color:var(--rec);border-color:var(--rec)}
+.linkbtn{background:none;border:0;padding:0 2px;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 .preview{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .pl{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-family:var(--f-script);font-size:14px;cursor:pointer;text-align:left;background:none;border-left:0;border-right:0;border-top:0;width:100%}
 .pl:last-child{border-bottom:0}
@@ -702,6 +707,8 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <div class="field">
       <span class="lab">Your character in this scene</span>
       <div class="chips" id="chips"></div>
+      <p class="hint" id="hiddenChars" hidden></p>
+      <p class="hint">Something here isn't a character, like a scene heading? Tap its <b>×</b> and it's treated as a direction instead.</p>
     </div>
     <p class="hint" id="parseInfo"></p>
     <div class="preview" id="preview" aria-label="Parsed sides"></div>
@@ -1328,9 +1335,23 @@ const TRANS = /^(FADE (IN|OUT)|CUT TO|DISSOLVE|SMASH CUT|THE END|CONTINUED|END)/
    "SOUND GUY") only match when they stand alone. */
 const NOT_NAME_START = /^(?:(?:extreme |medium )?close[ -]?(?:on|up|ups)\b|angle on\b|back to\b|insert(?:ed)? (?:on|shot)\b|inter-?cut\b|montage\b|flash ?(?:back|forward)\b|series of shots\b|superimpose|title card\b|end of\b|split screen\b|stage directions?\b|pre-?lap\b|(?:a )?(?:few )?(?:moments?|minutes?|hours?|days?|weeks?|months?|years?) later\b|later (?:that|on)\b|cold open\b|smash cut\b|match cut\b|jump cut\b|cut to\b|fade (?:in|out|to)\b|dissolve to\b|over black\b|(?:his|her|their|our) pov\b|(?:his|her|their|its|our) |on (?:screen|tv|the screen|the tv)\b|act (?:one|two|three|four|five|\d+|[ivx]+)\b|scene \d|sc\.? ?\d|page \d|int\b|ext\b|i\/e\b)/i;
 const NOT_NAME_ALONE = /^(?:angle|insert|montage|flashback|super|title|chyron|subtitles?|caption|continuous|later|meanwhile|black|blackout|pov|establishing|wide|wide shot|omitted|omit|scene|sides|revised|revisions?|draft|beat|silence|pause|location|setting|settings|place|time|date|note|notes|cast|characters?|production|project|role|directions?|description|archive|footage|sfx|vfx|music|sound|v\.o\.|o\.s\.|o\.c\.|cut|fade|transition|teaser|tag|same|interior|exterior|day|night|morning|evening|afternoon|dawn|dusk|end|the end|blank)(?:\s+#?\d+[a-z]?)?$/i;
+/* Headings that set a time or a place without INT./EXT.: "ANOTHER NIGHT", "THE NEXT MORNING",
+   "LATER THAT DAY", "MIKE'S APARTMENT". */
+const TIME_END = /\b(?:night|nighttime|morning|evening|afternoon|dawn|dusk|sunset|sunrise|midnight|noon|midday|later|continuous|tonight|today|tomorrow|yesterday)$/i;
+const DAY_PHRASE = /^(?:another|next|the next|that|the same|same|later that|earlier that|one|a|the|this|every|each|following|the following|first|last|the first|the last|\w+ days?)\s.*\b(?:day|week|month|year)s?$|^(?:day|week|month|year) \w+$/i;
+const PLACE_END = /\b(?:apartment|flat|house|home|office|kitchen|bedroom|bathroom|living room|lounge|room|hallway|corridor|lobby|street|road|park|car|truck|van|bar|pub|club|restaurant|diner|cafe|café|school|classroom|hospital|ward|station|precinct|warehouse|garage|rooftop|roof|basement|attic|garden|yard|backyard|porch|beach|forest|woods|hotel|motel|church|lab|studio|store|shop|mall|airport|parking lot|lot|alley|alleyway|bridge|elevator|lift|stairwell|stairs|courtroom|cell|prison|farm|field|office building|reception|waiting room)$/i;
+function hiddenName(n){
+  let list = [];
+  try { list = (P && P.notChars) || []; } catch(e){ /* before the audition sheet loads */ }
+  return list.length > 0 && list.includes(cleanName(n));
+}
 function notName(n){
   n = n.replace(/\(.*?\)/g, "").replace(/[:\s]+$/, "").replace(/\s+/g, " ").trim();
   if (!n) return true;
+  if (hiddenName(n)) return true;                              // the actor said it isn't a character
+  if (TIME_END.test(n) || DAY_PHRASE.test(n)) return true;      // "ANOTHER NIGHT" is a time, not a person
+  if (PLACE_END.test(n) && n.split(" ").length > 1) return true; // "MIKE'S APARTMENT" is a place
+  if (/^(?:interior|exterior|inside|outside|back at|meanwhile at|at the|in the|on the)\b/i.test(n)) return true;
   if (NOT_NAME_START.test(n) || NOT_NAME_ALONE.test(n)) return true;
   if (/\s[-–—]+\s|[–—]|\s-$|^-/.test(n)) return true;               // "KITCHEN - NIGHT" is a place, not a person
   if (/\.$/.test(n) && !/^(MR|MRS|MS|DR|JR|SR|ST)\.$/i.test(n.split(" ").pop())) return true;   // "SILENCE." is a direction
@@ -1415,7 +1436,7 @@ function align(lineW, heardW){
 }
 
 /* ---------- audition sheet ---------- */
-const PDEF = {name:"", agency:"", production:"", character:"", scenes:2, takes:2, scripts:{}, roles:{}};
+const PDEF = {name:"", agency:"", production:"", character:"", scenes:2, takes:2, scripts:{}, roles:{}, notChars:[]};
 let P = Object.assign({}, PDEF);
 try { Object.assign(P, JSON.parse(localStorage.getItem("tm.project") || "{}")); } catch(e){}
 try {
@@ -1474,12 +1495,29 @@ function reparse(){
   if (startIdx >= LINES.length) startIdx = 0;
   const chips = $("#chips"); chips.innerHTML = "";
   chars.forEach(c => {
+    const w = document.createElement("span"); w.className = "chipwrap";
     const b = document.createElement("button");
     b.type="button"; b.className="chip"; b.setAttribute("aria-pressed", String(c===ME));
     b.innerHTML = `${esc(c)}<small>${counts[c]} line${counts[c]>1?"s":""}</small>`;
     b.onclick = () => { P.roles[CUR] = c; saveP(); reparse(); };
-    chips.appendChild(b);
+    w.appendChild(b);
+    if (c !== ME){
+      const x = document.createElement("button");
+      x.type = "button"; x.className = "chipx"; x.textContent = "×";
+      x.title = `${c} isn't a character`; x.setAttribute("aria-label", `${c} isn't a character. Treat it as a scene direction`);
+      x.onclick = () => {
+        P.notChars = [...new Set([...(P.notChars || []), c])]; saveP(); reparse();
+        toast(`${c} is now treated as a scene direction, so it won't be read on the take.`);
+      };
+      w.appendChild(x);
+    }
+    chips.appendChild(w);
   });
+  const hidden = (P.notChars || []).filter(n => (scriptEl.value || "").toUpperCase().includes(n));
+  const hl = $("#hiddenChars");
+  hl.hidden = !hidden.length;
+  hl.innerHTML = hidden.length ? `Not characters: ${hidden.map(n => `<button type="button" class="linkbtn" data-n="${esc(n)}" title="Make ${esc(n)} a character again">${esc(n)} <span aria-hidden="true">↺</span></button>`).join(" ")}` : "";
+  hl.querySelectorAll("button").forEach(btn => btn.onclick = () => { P.notChars = (P.notChars || []).filter(n => n !== btn.dataset.n); saveP(); reparse(); });
   $("#parseInfo").textContent = LINES.length
     ? `Scene ${CUR}: ${LINES.length} lines across ${chars.length} character${chars.length>1?"s":""}.`
     : `No dialogue for Scene ${CUR} yet. Paste the sides above.`;
