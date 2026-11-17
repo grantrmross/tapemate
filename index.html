@@ -89,6 +89,22 @@ a.btn{display:inline-block;text-decoration:none;color:var(--fg)}
 .seg button{flex:1;background:var(--bg);border:0;padding:9px 8px;font-size:13px;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--raise);color:var(--accent);font-weight:700}
+.elbox{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--bg)}
+.elbox label{font-size:13px;font-weight:500}
+.elkeyrow{display:flex;gap:8px;flex-wrap:wrap}
+.elkeyrow input{flex:1 1 220px;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.elhow ol{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.elhow ol b,.elhow ol code{color:var(--fg)}
+.elbox a{color:var(--accent)}
+.elbox summary{cursor:pointer;font-size:13px;font-weight:500}
+.eltools{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.elfind .row{margin-top:8px;flex-wrap:wrap}
+.elfind select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 8px;width:auto;flex:1 1 150px;min-width:0}
+.elresults{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.elres{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.elres b{display:block;font-size:14px}
+.elres small{display:block;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.elres .btn{padding:6px 12px}
 .roombox{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px;background:var(--bg)}
 .subhead{margin:4px 0 -4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--f-ui)}
 input[type=range]{width:100%;accent-color:var(--accent)}
@@ -909,6 +925,66 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     </div>
     <div class="field">
       <span class="lab">Reader voices</span>
+      <div class="seg" id="engine">
+        <button type="button" data-v="browser">Built-in (free)</button>
+        <button type="button" data-v="eleven">ElevenLabs</button>
+      </div>
+      <div class="elbox" id="elBox" hidden>
+        <label for="elKey">ElevenLabs API key</label>
+        <div class="elkeyrow">
+          <input id="elKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste your ElevenLabs API key">
+          <button class="btn primary" id="elSave" type="button">Save key</button>
+          <button class="btn" id="elForget" type="button" hidden>Remove</button>
+        </div>
+        <p class="hint" id="elStatus" role="status"></p>
+        <p class="hint">Your key is saved only in this browser on this device and is only ever sent to ElevenLabs. It is never part of TapeMate's code or your audition files.</p>
+        <details class="elhow" id="elHow">
+          <summary>How to get a key</summary>
+          <ol>
+            <li>Sign up at <a href="https://elevenlabs.io" target="_blank" rel="noopener">elevenlabs.io</a>. The free plan gives you 10,000 credits a month, about 10 minutes of reading.</li>
+            <li>Open <a href="https://elevenlabs.io/app/developers/api-keys" target="_blank" rel="noopener">API keys</a>. If that link has moved, look under Developers in the left menu.</li>
+            <li>Tap <b>Create API key</b> and name it TapeMate. Turn on <b>Restrict key</b> and allow <b>Text to Speech</b>, <b>Voices: Read</b> and, to see your credits here, <b>User: Read</b>. Allow <b>Voices: Write</b> too if you want to add voices from inside TapeMate.</li>
+            <li>Copy the key (it starts with <code>sk_</code>), paste it above and tap Save key.</li>
+          </ol>
+        </details>
+        <div class="eltools" id="elTools" hidden>
+          <div class="field">
+            <span class="lab">Voice model</span>
+            <div class="seg" id="elModel">
+              <button type="button" data-v="v2">Most natural</button>
+              <button type="button" data-v="flash">Faster, half the credits</button>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn" id="elPrep" type="button">Get this scene ready</button>
+            <span class="hint" id="elPrepOut"></span>
+          </div>
+          <details class="elfind" id="elFind">
+            <summary>Find more voices, such as South African</summary>
+            <div class="row">
+              <select id="elAccent" aria-label="Accent">
+                <option value="south african">South African</option>
+                <option value="british">British</option>
+                <option value="american">American</option>
+                <option value="australian">Australian</option>
+                <option value="irish">Irish</option>
+                <option value="scottish">Scottish</option>
+                <option value="nigerian">Nigerian</option>
+                <option value="indian">Indian</option>
+              </select>
+              <select id="elGender" aria-label="Gender">
+                <option value="">Any gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+              <button class="btn" id="elSearch" type="button">Search</button>
+            </div>
+            <div class="elresults" id="elResults"></div>
+            <p class="hint">Adding a voice puts it in My Voices in your ElevenLabs account, and it appears in the lists below. You can also add voices on the website in the <a href="https://elevenlabs.io/app/voice-library" target="_blank" rel="noopener">Voice Library</a>. Some library voices need a paid ElevenLabs plan.</p>
+          </details>
+          <div class="row"><button class="linkbtn" id="elClear" type="button">Clear saved lines</button><span class="hint" id="elCacheOut"></span></div>
+        </div>
+      </div>
       <p class="hint" id="voicesHint">Each character gets 5 female and 5 male voices to choose from. Picking one plays a preview.</p>
       <div class="row accall" id="accAll" hidden>
         <span class="hint">Everyone:</span>
@@ -1346,11 +1422,237 @@ Partners. Now go get the keys before I come to my senses.
 
 /* ---------- settings ---------- */
 const DEF = {cue:null, audio:"headphones", silence:1300, rate:1, lang:"", facing:"user", prompt:"all", tail:"3", quality:"auto", voicePick:{},
-             reader:"app", roomLines:"none",
+             reader:"app", roomLines:"none", engine:"browser", elModel:"v2", elPick:{},
              rhMode:"lines", rhOff:"show", rhStall:"4000", rhLoop:"once"};
 let S = Object.assign({}, DEF);
 try { Object.assign(S, JSON.parse(localStorage.getItem("tm.settings")||"{}")); } catch(e){}
 const save = () => { try { localStorage.setItem("tm.settings", JSON.stringify(S)); } catch(e){} };
+
+/* ---------- ElevenLabs voices (optional) ---------- */
+// The actor pastes their own key. It lives only in this browser's storage, is never part of the
+// page's code (the site is public), and is only ever sent to api.elevenlabs.io.
+const EL_API = "https://api.elevenlabs.io";
+const EL_KEY = "tm.elevenKey", EL_VOICES = "tm.elevenVoices";
+const EL = {voices: [], cast: {}, prepping: false, blocked: null, warned: 0, inflight: new Map(), active: 0, queue: [], stop: null};
+try { EL.voices = JSON.parse(localStorage.getItem(EL_VOICES) || "[]"); } catch(e){}
+function elKey(){ try { return localStorage.getItem(EL_KEY) || ""; } catch(e){ return ""; } }
+function elOn(){ return S.engine === "eleven" && !!elKey() && EL.voices.length > 0; }
+const elModelId = () => S.elModel === "flash" ? "eleven_flash_v2_5" : "eleven_multilingual_v2";
+const elRate = () => S.elModel === "flash" ? 0.5 : 1;            // credits per character
+const elErr = (code, msg = "", http = 0) => Object.assign(new Error(code), {code: String(code), msg: String(msg || ""), http});
+async function elFetch(path, opts = {}){
+  const key = elKey(); if (!key) throw elErr("nokey");
+  let r;
+  try { r = await fetch(EL_API + path, Object.assign({}, opts, {headers: Object.assign({"xi-api-key": key}, opts.headers || {})})); }
+  catch(e){ throw elErr("network"); }
+  if (!r.ok){
+    let d = null; try { d = (await r.json()).detail; } catch(e){}
+    const code = d && typeof d === "object" ? (d.status || d.code || "") : "";
+    const msg = d && typeof d === "object" ? (d.message || "") : typeof d === "string" ? d : "";
+    throw elErr(code || "http" + r.status, msg, r.status);
+  }
+  return r;
+}
+/* Plain words for what went wrong. */
+function elExplain(e){
+  const c = (e && e.code) || "", m = (e && e.msg) || "", both = c + " " + m;
+  if (c === "nokey") return "Add your ElevenLabs key first.";
+  if (c === "network") return "Couldn't reach ElevenLabs. Check your internet connection.";
+  if (c === "play") return "This browser wouldn't play the ElevenLabs audio.";
+  if (/quota|credits? (have )?run out|insufficient|not enough credits/i.test(both)) return "Your ElevenLabs credits have run out for now. Lines already saved on this device still play.";
+  if (/invalid_api_key|invalid api key|api key.*(invalid|not found)/i.test(both)) return "ElevenLabs didn't accept this key. Check that you copied all of it.";
+  if (/missing_permission|permission/i.test(both)) return ("This key isn't allowed to do that. " + m).trim();
+  if (e && e.http === 402 || /payment|paid plan|subscription|upgrade/i.test(both)) return ("This needs a paid ElevenLabs plan. " + m).trim();
+  if (e && e.http === 429 || /too_many|rate.?limit|concurrent/i.test(both)) return "ElevenLabs is busy right now. Try again in a moment.";
+  if (/voice_not_found|voice.*not found/i.test(both)) return "That voice isn't in your ElevenLabs account any more. Pick another one.";
+  return m ? "ElevenLabs: " + m : `ElevenLabs didn't answer (${c}).`;
+}
+function elNorm(v){
+  const L = v.labels || {};
+  const gs = String(L.gender || v.gender || "");
+  return {
+    id: v.voice_id, name: v.name || "Voice",
+    acc: String(L.accent || v.accent || "").toLowerCase().replace(/[-_]+/g, " ").trim(),
+    g: /^f/i.test(gs) ? "f" : /^m/i.test(gs) ? "m" : "",
+    age: String(L.age || v.age || "").replace(/_/g, " "),
+    desc: String(L.description || L.descriptive || v.descriptive || "").replace(/_/g, " "),
+    preview: v.preview_url || ""
+  };
+}
+async function elLoadVoices(){
+  let list = [];
+  try {
+    let tok = "";
+    for (let n = 0; n < 5; n++){
+      const r = await (await elFetch("/v2/voices?page_size=100" + (tok ? "&next_page_token=" + encodeURIComponent(tok) : ""))).json();
+      list = list.concat(r.voices || []);
+      if (!r.has_more || !r.next_page_token) break;
+      tok = r.next_page_token;
+    }
+  } catch(e){
+    if (e.http !== 404) throw e;
+    list = (await (await elFetch("/v1/voices")).json()).voices || [];
+  }
+  EL.voices = list.map(elNorm).filter(v => v.id);
+  try { localStorage.setItem(EL_VOICES, JSON.stringify(EL.voices)); } catch(e){}
+  return EL.voices;
+}
+async function elCredits(){
+  try { const s = await (await elFetch("/v1/user/subscription")).json(); return s && s.character_limit ? {left: Math.max(0, s.character_limit - (s.character_count || 0)), limit: s.character_limit} : null; }
+  catch(e){ return null; }
+}
+const ACC_NAME = a => a ? a.replace(/\b\w/g, ch => ch.toUpperCase()) : "Other";
+/* Accents to try first: South African, then British, on a South African device; British on other Commonwealth ones. */
+function elPrefAccents(){
+  const r = (langOf().split(/[-_]/)[1] || "").toUpperCase();
+  if (r === "ZA") return ["south african", "british", "american", "australian"];
+  if (["GB", "IE", "AU", "NZ", "IN"].includes(r)) return ["british", "south african", "american", "australian"];
+  return ["american", "british", "south african", "australian"];
+}
+/* Each character gets a distinct ElevenLabs voice: their own pick, else the right gender in the preferred accent. */
+function elCast(chars){
+  const cast = {}, used = new Set();
+  S.elPick = S.elPick || {};
+  chars.forEach(c => { const id = S.elPick[c]; if (id && EL.voices.some(v => v.id === id)){ cast[c] = id; used.add(id); } });
+  const pref = elPrefAccents(), rank = v => { const i = pref.indexOf(v.acc); return i < 0 ? pref.length : i; };
+  let alt = 0;
+  chars.filter(c => !cast[c]).forEach(c => {
+    const g = charGender(c) || (alt++ % 2 ? "m" : "f");
+    const pool = EL.voices.filter(v => !used.has(v.id)).sort((a, b) => ((a.g === g ? 0 : 1) - (b.g === g ? 0 : 1)) || (rank(a) - rank(b)));
+    const v = pool[0] || EL.voices[0];
+    if (v){ cast[c] = v.id; used.add(v.id); }
+  });
+  return cast;
+}
+/* The ElevenLabs voice for a character, or null to use the built-in voices. Your own lines never use credits. */
+function elVoiceFor(who){
+  if (!elOn() || !who || who === ME) return null;
+  if (EL.cast[who] && EL.voices.some(v => v.id === EL.cast[who])) return EL.cast[who];
+  return elCast([who])[who] || null;
+}
+/* A line as ElevenLabs chunks: (beat) and (pause) stay as silences, other parentheticals are dropped. */
+function elPlan(text){
+  const segs = [];
+  String(text || "").split(/(\([^)]*\)|\[[^\]]*\])/).forEach(part => {
+    if (!part.trim()) return;
+    if (/^[\(\[]/.test(part)){ if (/beat|pause|silence|moment|breath|sigh/i.test(part)) segs.push({pause: /long|silence/i.test(part) ? 1500 : 800}); return; }
+    const t = tidyWords(part);
+    if (/[a-z0-9]/i.test(t)) segs.push({text: t});
+  });
+  while (segs.length && segs[0].pause) segs.shift();
+  while (segs.length && segs[segs.length - 1].pause) segs.pop();
+  return segs;
+}
+/* Saved lines: each generated line is kept on this device, so hearing it again costs nothing. */
+let elDB = null;
+function elDb(){
+  if (elDB) return Promise.resolve(elDB);
+  return new Promise(res => {
+    try {
+      const r = indexedDB.open("tapemate-voices", 1);
+      r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains("lines")) r.result.createObjectStore("lines", {keyPath: "k"}); };
+      r.onsuccess = () => { elDB = r.result; res(elDB); };
+      r.onerror = () => res(null);
+    } catch(e){ res(null); }
+  });
+}
+function elStore(mode, fn){
+  return elDb().then(db => db && new Promise(res => {
+    try { const q = fn(db.transaction("lines", mode).objectStore("lines")); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }
+    catch(e){ res(null); }
+  }));
+}
+const elKeyOf = (vid, text) => `${vid}|${elModelId()}|${text}`;
+const elCacheGet = k => elStore("readonly", st => st.get(k)).then(r => r && r.buf ? new Blob([r.buf], {type: r.type || "audio/mpeg"}) : null);
+const elCacheHas = k => elStore("readonly", st => st.count(k)).then(n => n > 0);
+const elCachePut = async (k, blob, chars) => { try { const buf = await blob.arrayBuffer(); await elStore("readwrite", st => st.put({k, buf, type: blob.type || "audio/mpeg", chars, at: Date.now()})); } catch(e){} };
+const elCacheAll = () => elStore("readonly", st => st.getAll()).then(r => r || []);
+const elCacheClear = () => elStore("readwrite", st => st.clear());
+/* At most two requests at a time (the free plan's limit); the line about to be spoken goes first. */
+const elSlot = urgent => new Promise(r => { if (EL.active < 2){ EL.active++; r(); } else (urgent ? EL.queue.unshift(r) : EL.queue.push(r)); });
+const elFree = () => { const n = EL.queue.shift(); if (n) n(); else EL.active = Math.max(0, EL.active - 1); };
+function elAudio(vid, text, urgent){
+  const k = elKeyOf(vid, text);
+  if (EL.inflight.has(k)) return EL.inflight.get(k);
+  const p = (async () => {
+    const hit = await elCacheGet(k); if (hit) return hit;
+    if (EL.blocked) throw EL.blocked;
+    await elSlot(urgent);
+    try {
+      for (let tries = 0; ; tries++){
+        try {
+          const r = await elFetch(`/v1/text-to-speech/${encodeURIComponent(vid)}?output_format=mp3_44100_128`, {
+            method: "POST", headers: {"Content-Type": "application/json", "Accept": "audio/mpeg"},
+            body: JSON.stringify({text, model_id: elModelId()})
+          });
+          const blob = await r.blob();
+          if (!blob.size) throw elErr("empty");
+          await elCachePut(k, blob, text.length);
+          return blob;
+        } catch(e){
+          if ((e.http === 429 || /too_many|concurrent/i.test(e.code)) && tries < 2){ await sleep(1200 * (tries + 1)); continue; }
+          if (/quota|invalid_api_key|missing_permission|nokey/i.test(e.code + " " + e.msg)) EL.blocked = e;   // stop asking until the key changes
+          throw e;
+        }
+      }
+    } finally { elFree(); }
+  })();
+  EL.inflight.set(k, p);
+  p.then(() => EL.inflight.delete(k), () => EL.inflight.delete(k));
+  return p;
+}
+/* Make the next few reader lines ahead of time, so the reader comes in without a gap. */
+function elPrefetch(from, n = 2){
+  if (!elOn() || EL.blocked) return;
+  let got = 0;
+  for (let i = Math.max(0, from); i < LINES.length && got < n; i++){
+    const l = LINES[i]; if (l.who === ME) continue;
+    const vid = elVoiceFor(l.who); if (!vid) continue;
+    elPlan(l.text).forEach(s => { if (s.text) elAudio(vid, s.text).catch(() => {}); });
+    got++;
+  }
+}
+const EL_PLAYER = new Audio(), EL_PREVIEW = new Audio();
+const EL_SILENCE = (() => {           // a short silent clip, to unlock audio on iPhone inside the tap
+  try {
+    const n = 800, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => [...t].forEach((c, i) => b[o + i] = c.charCodeAt(0));
+    w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, "data"); v.setUint32(40, n, true); b.fill(128, 44);
+    return URL.createObjectURL(new Blob([b], {type: "audio/wav"}));
+  } catch(e){ return ""; }
+})();
+function elUnlock(){
+  if (!EL_SILENCE) return;
+  try {
+    const a = EL_PLAYER; a.muted = true; a.src = EL_SILENCE;
+    const p = a.play();
+    const done = () => { if (a.src === EL_SILENCE){ a.pause(); } a.muted = false; };
+    p && p.then ? p.then(done, done) : done();
+  } catch(e){}
+}
+function elPlay(blob){
+  return new Promise(resolve => {
+    const a = EL_PLAYER, url = URL.createObjectURL(blob);
+    let done = false;
+    const fin = ok => { if (done) return; done = true; clearTimeout(g); a.onended = a.onerror = null; if (EL.stop === stop) EL.stop = null; try { URL.revokeObjectURL(url); } catch(e){} resolve(ok); };
+    const stop = () => { try { a.pause(); } catch(e){} fin(true); };
+    EL.stop = stop;
+    a.onended = () => fin(true); a.onerror = () => fin(false);
+    a.muted = false; a.src = url;
+    const rt = Math.max(0.7, Math.min(1.4, +S.rate || 1));
+    try { a.preservesPitch = true; a.defaultPlaybackRate = rt; a.playbackRate = rt; } catch(e){}
+    const g = setTimeout(() => fin(true), 90000);
+    const p = a.play(); if (p && p.catch) p.catch(() => fin(false));
+  });
+}
+function elStop(){ if (EL.stop) EL.stop(); }
+function elPreview(url){ if (!url) return; try { EL_PREVIEW.pause(); EL_PREVIEW.src = url; EL_PREVIEW.play().catch(() => {}); } catch(e){} }
+/* One clear note when ElevenLabs can't read a line; the built-in voice carries on meanwhile. */
+function elWarn(e){
+  const msg = elExplain(e);
+  const st = document.getElementById("elStatus"); if (st) st.textContent = msg;
+  if (Date.now() - EL.warned > 20000){ EL.warned = Date.now(); toast(msg + " The built-in voice is reading for now.", 7000); }
+}
 
 const ua = navigator.userAgent;
 const isIOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -1977,6 +2279,8 @@ const ADD_VOICE_HELP = {
   us: "To add one on Windows: Settings → Time & language → Speech → Add voices → English (United States), then restart Chrome."
 };
 function renderVoices(others){
+  if (elOn()) return renderElVoices(others);
+  EL.cast = {};
   const box = $("#voices"); box.innerHTML = "";
   if (!canTTS){ box.innerHTML = `<p class="hint">This browser can't speak text, so the reader will be silent. Tap through lines instead.</p>`; $("#accAll").hidden = true; return; }
   CAST = castVoices(others);
@@ -2132,6 +2436,170 @@ seg("#readerWho","reader", v => {
     : "The app reads the other characters with the voices below.";
 });
 seg("#roomLines","roomLines", roomLinesHint);
+/* ---------- ElevenLabs settings ---------- */
+/* The voice rows when ElevenLabs is on: one list of your account's voices, grouped by accent. */
+function renderElVoices(others){
+  const box = $("#voices"); box.innerHTML = "";
+  $("#accAll").hidden = true; $("#voiceTip").hidden = true;
+  EL.cast = elCast(others);
+  $("#voicesHint").textContent = "Voices from your ElevenLabs account. Choosing one plays its free sample. Hear reads the character's first line, which uses a few credits once and is then saved on this device.";
+  const pref = elPrefAccents();
+  const accs = [...new Set(EL.voices.map(v => v.acc))].sort((a, b) => {
+    const ia = pref.indexOf(a), ib = pref.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || (!a) - (!b) || a.localeCompare(b);
+  });
+  const sample = c => { const l = LINES.find(l => l.who === c); return l ? l.text : "Ready when you are."; };
+  const vOf = id => EL.voices.find(v => v.id === id);
+  others.forEach(c => {
+    const row = document.createElement("div"); row.className = "vrow";
+    const g = charGender(c), cur = vOf(EL.cast[c]);
+    const twin = cur && others.find(d => d !== c && EL.cast[d] === cur.id);
+    row.innerHTML = `<span class="who">${esc(c)}${twin ? `<small class="dup">same voice as ${esc(ACC_NAME(twin.toLowerCase()))}</small>` : `<small>${g === "f" ? "reads as female" : g === "m" ? "reads as male" : ""}</small>`}</span>`;
+    const sel = document.createElement("select"); sel.setAttribute("aria-label", `ElevenLabs voice for ${c}`);
+    sel.innerHTML = accs.map(a => `<optgroup label="${esc(ACC_NAME(a))}">` + EL.voices.filter(v => v.acc === a).map(v =>
+      `<option value="${esc(v.id)}" ${cur && cur.id === v.id ? "selected" : ""}>${esc(v.name)}${v.g ? (v.g === "f" ? " · female" : " · male") : ""}${v.age ? " · " + esc(v.age) : ""}</option>`).join("") + `</optgroup>`).join("");
+    sel.onchange = () => { S.elPick[c] = sel.value; save(); const v = vOf(sel.value); if (v) elPreview(v.preview); renderElVoices(others); };
+    row.append(sel);
+    const test = document.createElement("button"); test.type = "button"; test.className = "btn"; test.textContent = "Hear";
+    test.onclick = () => speak(sample(c), c);
+    row.append(test);
+    if (cur){
+      const note = document.createElement("small"); note.className = "vnote";
+      note.textContent = `${cur.name}: ${ACC_NAME(cur.acc)}${cur.desc ? ", " + cur.desc : ""}.`;
+      row.append(note);
+    }
+    box.appendChild(row);
+  });
+  if (!others.length) box.innerHTML = `<p class="hint">Only one character in this scene, so there's nothing for the reader to say.</p>`;
+  save();
+  elPrepLabel();
+}
+/* Lines the reader will say in this scene, as [voice, text] pairs. */
+function elSceneJobs(){
+  const out = [], seen = new Set();
+  LINES.forEach((l, i) => {
+    if (l.who === ME) return;
+    const vid = elVoiceFor(l.who); if (!vid) return;
+    elPlan(l.text).forEach(s => { if (!s.text) return; const k = elKeyOf(vid, s.text); if (!seen.has(k)){ seen.add(k); out.push({vid, text: s.text, k, line: i}); } });
+  });
+  return out;
+}
+async function elPrepLabel(){
+  const b = $("#elPrep"); if (!b || EL.prepping) return;
+  if (!elOn()){ $("#elPrepOut").textContent = ""; return; }
+  const jobs = elSceneJobs(), todo = [];
+  for (const j of jobs) if (!(await elCacheHas(j.k))) todo.push(j);
+  const lines = new Set(todo.map(j => j.line)).size;
+  const credits = Math.ceil(todo.reduce((n, j) => n + j.text.length, 0) * elRate());
+  b.disabled = !todo.length;
+  b.textContent = todo.length ? `Get Scene ${CUR} ready` : `Scene ${CUR} is ready`;
+  $("#elPrepOut").textContent = !jobs.length ? ""
+    : todo.length ? `${lines} reader line${lines > 1 ? "s" : ""} to make, about ${credits.toLocaleString()} credits. After that, this scene costs nothing to rehearse.`
+    : "Every reader line in this scene is saved on this device, so rehearsing it uses no credits.";
+  elCacheLabel();
+}
+async function elCacheLabel(){
+  const all = await elCacheAll();
+  const bytes = all.reduce((n, r) => n + ((r.buf && r.buf.byteLength) || 0), 0);
+  $("#elCacheOut").textContent = all.length ? `${all.length} saved line${all.length > 1 ? "s" : ""}, ${Math.max(0.1, bytes / 1e6).toFixed(1)} MB` : "";
+  $("#elClear").hidden = !all.length;
+}
+function elRenderStatus(msg){
+  const k = elKey();
+  $("#elKey").placeholder = k ? `Key saved · ends in ${k.slice(-4)}` : "Paste your ElevenLabs API key";
+  $("#elForget").hidden = !k;
+  $("#elSave").textContent = k ? "Replace key" : "Save key";
+  $("#elHow").open = !k;
+  $("#elStatus").textContent = msg || (!k ? "No key yet, so the built-in voices read for now."
+    : EL.voices.length ? `Connected. ${EL.voices.length} voices in your ElevenLabs account.` : "Key saved. Loading your voices…");
+  $("#elTools").hidden = !elOn();
+}
+async function elConnect(quiet){
+  if (!elKey()) return elRenderStatus();
+  if (!quiet) $("#elStatus").textContent = "Checking your key…";
+  try {
+    await elLoadVoices();
+    const c = await elCredits();
+    elRenderStatus(!EL.voices.length ? "Connected, but there are no voices in this ElevenLabs account yet."
+      : `Connected. ${EL.voices.length} voices` + (c ? `, and ${c.left.toLocaleString()} of ${c.limit.toLocaleString()} credits left this month.` : "."));
+  } catch(e){ elRenderStatus(elExplain(e)); }
+  try { reparse(); } catch(e){}
+}
+let elReady = false;
+seg("#engine", "engine", v => {
+  $("#elBox").hidden = v !== "eleven";
+  elRenderStatus();
+  if (elReady){ try { reparse(); } catch(e){} if (v === "eleven" && elKey()) elConnect(true); }
+});
+seg("#elModel", "elModel", () => { if (elReady) elPrepLabel(); });
+elReady = true;
+$("#elSave").onclick = () => {
+  const v = $("#elKey").value.trim();
+  if (!v){ if (elKey()) elConnect(); else { $("#elStatus").textContent = "Paste your key first."; $("#elKey").focus(); } return; }
+  if (/\s/.test(v) || v.length < 20){ $("#elStatus").textContent = "That doesn't look like an ElevenLabs key. It's one long piece of text, usually starting with sk_."; return; }
+  try { localStorage.setItem(EL_KEY, v); localStorage.removeItem(EL_VOICES); } catch(e){}
+  $("#elKey").value = ""; EL.blocked = null; EL.voices = [];
+  elConnect();
+};
+$("#elKey").onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); $("#elSave").click(); } };
+$("#elForget").onclick = () => {
+  try { localStorage.removeItem(EL_KEY); localStorage.removeItem(EL_VOICES); } catch(e){}
+  EL.voices = []; EL.cast = {}; EL.blocked = null; S.elPick = {}; save();
+  elRenderStatus("Key removed from this device. The built-in voices read now.");
+  try { reparse(); } catch(e){}
+};
+$("#elPrep").onclick = async () => {
+  if (EL.prepping || !elOn()) return;
+  const jobs = elSceneJobs(), todo = [];
+  for (const j of jobs) if (!(await elCacheHas(j.k))) todo.push(j);
+  if (!todo.length) return elPrepLabel();
+  EL.prepping = true; $("#elPrep").disabled = true;
+  let done = 0, err = null;
+  const out = $("#elPrepOut");
+  const step = async () => { while (todo.length && !err){ const j = todo.shift(); try { await elAudio(j.vid, j.text); done++; out.textContent = `Making the reader's lines… ${done} of ${done + todo.length}`; } catch(e){ err = e; } } };
+  out.textContent = "Making the reader's lines…";
+  await Promise.all([step(), step()]);
+  EL.prepping = false;
+  if (err){ $("#elPrep").disabled = false; out.textContent = elExplain(err); }
+  else elPrepLabel();
+};
+$("#elClear").onclick = async () => { await elCacheClear(); elPrepLabel(); toast("Saved ElevenLabs lines cleared from this device."); };
+$("#elSearch").onclick = async () => {
+  const out = $("#elResults"), acc = $("#elAccent").value, g = $("#elGender").value;
+  out.innerHTML = `<p class="hint">Searching…</p>`;
+  try {
+    const q = new URLSearchParams({page_size: "20", language: "en", accent: acc}); if (g) q.set("gender", g);
+    let list = (await (await elFetch("/v1/shared-voices?" + q)).json()).voices || [];
+    if (!list.length){                       // some libraries tag accents differently: search by name too
+      const q2 = new URLSearchParams({page_size: "20", search: ACC_NAME(acc)}); if (g) q2.set("gender", g);
+      list = (await (await elFetch("/v1/shared-voices?" + q2)).json()).voices || [];
+    }
+    if (!list.length){ out.innerHTML = `<p class="hint">No ${esc(ACC_NAME(acc))} voices found. Try the Voice Library on the ElevenLabs website.</p>`; return; }
+    out.innerHTML = "";
+    list.forEach(v => {
+      const n = elNorm(v), have = EL.voices.some(x => x.id === n.id);
+      const row = document.createElement("div"); row.className = "elres";
+      row.innerHTML = `<div><b>${esc(n.name)}</b><small>${esc([ACC_NAME(n.acc), n.g === "f" ? "female" : n.g === "m" ? "male" : "", n.age, n.desc].filter(Boolean).join(" · "))}</small></div>`;
+      const hear = document.createElement("button"); hear.type = "button"; hear.className = "btn"; hear.textContent = "Hear";
+      hear.onclick = () => elPreview(n.preview); hear.disabled = !n.preview;
+      const add = document.createElement("button"); add.type = "button"; add.className = "btn primary"; add.textContent = have ? "Added" : "Add"; add.disabled = have;
+      add.onclick = async () => {
+        add.disabled = true; add.textContent = "Adding…";
+        try {
+          await elFetch(`/v1/voices/add/${encodeURIComponent(v.public_owner_id)}/${encodeURIComponent(v.voice_id)}`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({new_name: n.name})});
+          await elLoadVoices(); add.textContent = "Added";
+          toast(`${n.name} is in your voices now. Pick it for a character below.`);
+          try { reparse(); } catch(e){}
+        } catch(e){
+          add.disabled = false; add.textContent = "Add";
+          toast(/permission/i.test(e.code + e.msg) ? "Your key can't add voices. Add it in the Voice Library on elevenlabs.io instead, or give the key Voices: Write." : elExplain(e), 8000);
+        }
+      };
+      row.append(hear, add); out.appendChild(row);
+    });
+  } catch(e){ out.innerHTML = `<p class="hint">${esc(elExplain(e))}</p>`; }
+};
+if (S.engine === "eleven" && elKey()) setTimeout(() => elConnect(true), 1200);   // refresh the voice list and credits quietly
 seg("#prompt","prompt");
 seg("#tail","tail");
 seg("#quality","quality", () => { try { renderQuality(); } catch(e){ /* before the shot list exists */ } });
@@ -2251,15 +2719,39 @@ function speakRaw(text, preset){
 }
 function speak(text, who){
   return new Promise(async resolve => {
-    if (!canTTS || !text){ setTimeout(resolve, 600); return; }
-    const busy = speechSynthesis.speaking || speechSynthesis.pending;
-    speechSynthesis.cancel();
+    const vid = text ? elVoiceFor(who) : null;
+    if ((!canTTS && !vid) || !text){ setTimeout(resolve, 600); return; }
+    const busy = canTTS && (speechSynthesis.speaking || speechSynthesis.pending);
+    if (canTTS) speechSynthesis.cancel();
+    elStop();
     const my = ++speakToken;
     if (busy) await new Promise(r => setTimeout(r, 80));   // Chrome can drop or misvoice a line spoken straight after cancel()
     if (my !== speakToken){ resolve(); return; }
     let done = false;
     const finish = () => { if (done) return; done = true; if (speakingDone === finish) speakingDone = null; resolve(); };
     speakingDone = finish;
+    try {
+      if (vid){
+        // ElevenLabs reads it; anything it can't (no credits, no internet) falls back to the built-in voice.
+        let rest = null;
+        const plan = elPlan(text);
+        for (let i = 0; i < plan.length; i++){
+          if (my !== speakToken || done) break;
+          const sg = plan[i];
+          if (sg.pause){ await sleep(sg.pause); continue; }
+          let ok = false;
+          try {
+            const blob = await elAudio(vid, sg.text, true);
+            if (my !== speakToken || done) break;
+            ok = await elPlay(blob);
+            if (!ok) elWarn(elErr("play"));
+          } catch(e){ elWarn(e); }
+          if (!ok){ rest = plan.slice(i).map(x => x.text || "").filter(Boolean).join(" "); break; }
+        }
+        if (rest === null || !rest || !canTTS || my !== speakToken || done){ finish(); return; }
+        text = rest;
+      }
+    } catch(e){ /* fall through to the built-in voice */ }
     const preset = voiceFor(who);
     try {
       for (const seg of speechPlan(text)){
@@ -2271,7 +2763,7 @@ function speak(text, who){
     finish();
   });
 }
-function stopSpeaking(){ speakToken++; if (canTTS) speechSynthesis.cancel(); speakingDone && speakingDone(); }
+function stopSpeaking(){ speakToken++; if (canTTS) speechSynthesis.cancel(); elStop(); speakingDone && speakingDone(); }
 
 /* ---------- audio level (pause detection) ---------- */
 let actx, analyser, levelBuf, floor = 0.01, lastVoiceAt = 0, voicedMs = 0, lastTick = 0, levelRAF;
@@ -2367,6 +2859,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   $("#bNext").setAttribute("aria-label", mode === "headshot" ? "Take photo" : "Next line");
   $("#prompter").hidden = true;
   // Unlock speech on iOS: must be inside the tap.
+  if (mode === "scene" && !room && elOn()) elUnlock();
   if (canTTS && mode === "scene" && !room){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }
   $("#setup").hidden = true; $("#review").hidden = true; $("#editor").hidden = true; $("#rehearsal").hidden = true; $("#stage").hidden = false;
   $("#endcard").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true;
@@ -2420,7 +2913,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   }
   const cam = $("#cam");
   cam.srcObject = stream; cam.classList.toggle("mirror", S.facing === "user");
-  try { await cam.play(); } catch(e){}
+  if (stream) try { await cam.play(); } catch(e){}     // with no stream, play() would wait forever
   if (stream && stream.getAudioTracks().length) startLevel(stream);
   try { run && run.wake && run.wake.release(); } catch(e){}
   run = {idx: rehearse ? RH.from : startIdx, turn:null, token:0, recording, wake:null, ended:false, rehearse, score:{}, hint:0, hintAt:0, args:[recording, mode, key, rehearse], room};
@@ -2432,6 +2925,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     setStatus("Frame your headshot, then tap SNAP");
     return;
   }
+  if (mode === "scene" && !room) elPrefetch(run.idx, 3);
   // A real take waits on the camera screen until the actor taps REC, then counts down 5 seconds
   // so they can get into position. Rehearsing without recording starts after a short 3.
   const me = run;
@@ -2644,6 +3138,7 @@ async function goTo(i){
   const line = LINES[i];
   const mine = line.who === ME;
   renderPrompter(i);
+  elPrefetch(i + 1, 2);
   if (mine){
     run.turn = "actor"; run.turnStart = performance.now(); run.guardUntil = run.turnStart + (S.audio==="speaker" ? 250 : 0);
     run.lineW = normWords(line.spoken);
@@ -3900,7 +4395,7 @@ function check(){
     [sh ? +sh[1] / Math.max(1, +sh[2]) : 0, "Shots recorded", sh ? `${sh[1]} / ${sh[2]}` : "—"],
     ...(S.reader === "room"
       ? [[1, "Reader", "In the room"], [1, "On screen in takes", pressed("#roomLines") || "—"]]
-      : [[1, "Reader listens", pressed("#cueMode") || "—"], [1, "Reader audio", pressed("#audioMode") || "—"]]),
+      : [[1, "Reader listens", pressed("#cueMode") || "—"], [1, "Reader audio", pressed("#audioMode") || "—"], [1, "Voices", elOn() ? "ElevenLabs" : "Built-in"]]),
     [last ? last / 100 : 0, "Last rehearse score", last ? last + "%" : "Not yet"],
   ];
   const cast = [...document.querySelectorAll("#voices .vrow")].map(r => {
