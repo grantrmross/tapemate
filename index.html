@@ -227,6 +227,18 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px}
 .topbar{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));background:linear-gradient(rgba(0,0,0,.65),transparent)}
 .recpill{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;background:rgba(0,0,0,.45);padding:6px 12px;border-radius:999px;white-space:nowrap;flex:none;max-width:68%;overflow:hidden}
 .recpill .shottag{overflow:hidden;text-overflow:ellipsis}
+.recpill:has(.qpick:not([hidden])){max-width:82%;padding-right:5px}
+.qpick{display:inline-flex;align-items:center;gap:3px;flex:none;font:inherit;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 6px 2px 9px;cursor:pointer;line-height:1.3}
+.qpick svg{width:12px;height:12px}
+.qpick[aria-expanded="true"]{background:#fff;color:#111}
+.qpick:disabled{background:none;border-color:transparent;padding:2px 0;cursor:default;opacity:1}
+.qpick:disabled svg{display:none}
+.qmenu{position:absolute;left:max(14px,env(safe-area-inset-left));top:calc(52px + env(safe-area-inset-top));z-index:6;min-width:220px;display:flex;flex-direction:column;padding:6px;border-radius:14px;background:rgba(18,19,22,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 40px -12px rgba(0,0,0,.7)}
+.qmenu button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:none;border:0;color:#fff;padding:9px 12px 9px 30px;border-radius:9px;position:relative;font:inherit;cursor:pointer}
+.qmenu button:hover,.qmenu button:focus-visible{background:rgba(255,255,255,.1);outline:none}
+.qmenu button b{font-size:15px}
+.qmenu button small{font-size:12px;color:#aab0ba}
+.qmenu button[aria-checked="true"]::before{content:"\2713";position:absolute;left:11px;top:9px;color:var(--accent);font-weight:700}
 .recpill i{width:10px;height:10px;border-radius:50%;background:var(--muted)}
 .recpill.on i{background:var(--rec);animation:blink 1.2s infinite}
 @keyframes blink{50%{opacity:.25}}
@@ -407,12 +419,11 @@ html.theming body *{transition:background-color .35s ease,color .35s ease,border
   .apptop{padding:8px 12px;gap:8px;min-height:54px}
   .apptop .slash,.crumb{display:none}
   .apptop .brand{font-size:21px;margin-right:auto}
-  .apptop .acts{position:fixed;left:0;right:0;bottom:0;margin:0;padding:12px max(14px,env(safe-area-inset-right)) calc(80px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:linear-gradient(transparent,var(--bg) 22%);z-index:4}
-  body:has(#setup[hidden]) .apptop .acts{display:none}
+  .apptop .acts{display:none}   /* phones use the Rehearse card and the Record buttons in Your audition */
   .apptop .acts .btn{flex:1}
   .apptop .acts .btn.big{padding:12px 14px;font-size:15px}
   .hero{min-height:190px;padding:22px 16px 24px}
-  .dash{padding:16px 12px 180px}
+  .dash{padding:16px 12px 110px}
   .tpop{top:60px;right:8px}
   .apptop .acts #goRehearse{background:var(--raise);color:var(--fg);border-color:var(--line)}
   html[data-theme="champagne"] .hero{margin:0 8px}
@@ -905,7 +916,12 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
 <section id="stage" hidden aria-label="Take in progress">
   <video id="cam" playsinline muted autoplay></video>
   <div class="topbar">
-    <div class="recpill" id="recpill"><i></i><span id="clock">REHEARSAL</span><span class="shottag" id="shotTag"></span></div>
+    <div class="recpill" id="recpill"><i></i><span id="clock">REHEARSAL</span><span class="shottag" id="shotTag"></span><button class="qpick" id="qPick" type="button" hidden aria-haspopup="menu" aria-expanded="false" aria-controls="qMenu" title="Change recording quality"><span id="qPickLabel">720p</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    <div class="qmenu" id="qMenu" role="menu" aria-label="Recording quality" hidden>
+      <button type="button" role="menuitemradio" data-v="auto"><b>Auto</b><small id="qmAuto">Best that fits under 100 MB</small></button>
+      <button type="button" role="menuitemradio" data-v="1080"><b>1080p</b><small>Full HD, bigger files</small></button>
+      <button type="button" role="menuitemradio" data-v="720"><b>720p</b><small>HD, smaller files</small></button>
+    </div>
     <div class="status"><span class="meter"><b id="meter"></b></span><span id="statusText">Getting ready</span></div>
   </div>
   <div class="prompter" id="prompter" title="Tap to move to the next line">
@@ -2239,6 +2255,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   $("#clock").textContent = mode === "headshot" ? "HEADSHOT" : recording ? "00:00" : "REHEARSAL";
   $("#shotTag").textContent = rehearse ? (recording ? "· Mock take, not saved" : RH.offbook ? "· Off-book" : "")
     : key && mode !== "headshot" ? "· " + shotLabel(key) : "";
+  $("#qPick").hidden = true; qMenu(false);
   setStatus(wantVideo ? "Starting camera" : "Starting");
   const needMic = mode !== "headshot" && (recording || S.cue !== "tap");
   micPersisted = await permState("microphone") === "granted";
@@ -2270,14 +2287,17 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
       }
     } catch(e){}
     REC = {tier, vbps, abps};
-    if (key && mode !== "headshot") $("#shotTag").textContent = `· ${shotLabel(key)} · ${TIERS[tier].label}`;
+    // the quality chip: a menu until REC is tapped, then just the label
+    $("#shotTag").textContent = rehearse ? "· Mock take, not saved ·" : key && mode !== "headshot" ? `· ${shotLabel(key)} ·` : "·";
+    $("#qPickLabel").textContent = TIERS[tier].label;
+    $("#qPick").hidden = mode === "headshot"; $("#qPick").disabled = false;
   }
   const cam = $("#cam");
   cam.srcObject = stream; cam.classList.toggle("mirror", S.facing === "user");
   try { await cam.play(); } catch(e){}
   if (stream && stream.getAudioTracks().length) startLevel(stream);
   try { run && run.wake && run.wake.release(); } catch(e){}
-  run = {idx: rehearse ? RH.from : startIdx, turn:null, token:0, recording, wake:null, ended:false, rehearse, score:{}, hint:0, hintAt:0};
+  run = {idx: rehearse ? RH.from : startIdx, turn:null, token:0, recording, wake:null, ended:false, rehearse, score:{}, hint:0, hintAt:0, args:[recording, mode, key, rehearse]};
   try { run.wake = await navigator.wakeLock.request("screen"); } catch(e){}
   levelLoop();
   if (mode === "headshot"){
@@ -2298,7 +2318,7 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     setStatus("Ready");
     await new Promise(res => { run.roll = res; });
     if (run !== me) return;            // they closed the take instead
-    run.roll = null;
+    run.roll = null; qMenu(false); $("#qPick").disabled = true;
     kept.forEach(([q, h]) => $(q).hidden = h);
     $("#readyCard").hidden = true; $("#bRoll").hidden = true;
     $("#stage").classList.remove("ready"); $("#bStop").setAttribute("aria-label", "Stop");
@@ -2510,6 +2530,7 @@ function exitStage(stayHidden){
   stream = null; run = null;
   $("#stage").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true; $("#countdown").hidden = true;
   $("#stage").classList.remove("ready"); $("#bStop").setAttribute("aria-label", "Stop");
+  qMenu(false);
   if (!stayHidden) $("#setup").hidden = false;
 }
 
@@ -3209,6 +3230,29 @@ $("#shrink").onclick = async () => {
 $("#shrinkCancel").onclick = () => { if (SHRINK.job){ SHRINK.job.cancelled = true; SHRINK.job.stop && SHRINK.job.stop(); } };
 
 function roll(){ if (run && run.turn === "ready" && run.roll) run.roll(); }
+/* Quality from the take screen: same setting as the Quality card. Before REC is tapped the camera
+   restarts at the new size; once recording, the chip is only a label. */
+function qMenu(open){
+  const m = $("#qMenu"), b = $("#qPick");
+  if (open && (b.hidden || b.disabled || !run || run.turn !== "ready")) open = false;
+  m.hidden = !open; b.setAttribute("aria-expanded", String(!!open));
+  if (!open) return;
+  let auto = ""; try { auto = TIERS[qualityPlan(null).tier].label; } catch(e){}
+  $("#qmAuto").textContent = auto ? `Best that fits under 100 MB (now ${auto})` : "Best that fits under 100 MB";
+  m.querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x.dataset.v === String(S.quality))));
+  (m.querySelector('[aria-checked="true"]') || m.querySelector("button")).focus();
+}
+$("#qPick").onclick = e => { e.stopPropagation(); qMenu($("#qMenu").hidden); };
+$("#qMenu").querySelectorAll("button").forEach(x => x.onclick = e => {
+  e.stopPropagation(); qMenu(false);
+  if (!run || run.turn !== "ready" || !run.args) return;
+  const v = x.dataset.v;
+  if (v === String(S.quality)) return;
+  const q = $(`#quality [data-v="${v}"]`); if (q) q.click();      // saves it and updates the Quality card
+  const a = run.args;
+  exitStage(true); begin(...a);
+});
+document.addEventListener("click", e => { if (!$("#qMenu").hidden && !e.target.closest("#qMenu")) qMenu(false); });
 function next(){
   if (!run || run.ended || run.turn === "slate") return;
   if (run.turn === "ready") return roll();
@@ -3231,6 +3275,7 @@ $("#bLine").onclick = () => giveLine(true);
 $("#bStop").onclick = () => { if (!run) return exitStage(); finish(); };
 document.addEventListener("keydown", e => {
   if ($("#stage").hidden) return;
+  if (!$("#qMenu").hidden){ if (e.code === "Escape"){ e.preventDefault(); qMenu(false); $("#qPick").focus(); } return; }
   if (e.code === "KeyL" && run && run.rehearse && RH.offbook){ e.preventDefault(); giveLine(true); }
   else if (e.code === "Space" || e.code === "ArrowRight"){ e.preventDefault(); next(); }
   else if (e.code === "ArrowLeft"){ e.preventDefault(); back(); }
@@ -3361,6 +3406,7 @@ async function loopAgain(token){
   const ec = $("#endcard"); ec.hidden = false;
   ec.textContent = (s && s.pct != null ? `Pass ${RH.passes.length}: ${s.pct}%. ` : "") + `Again from line ${RH.from + 1}…`;
   $("#shotTag").textContent = `${run.recording ? "· Mock take, not saved " : ""}· Loop, pass ${RH.passes.length + 1}`;
+  $("#qPick").hidden = true;
   setStatus("Going again");
   await sleep(2200);
   if (!run || token !== run.token) return;
