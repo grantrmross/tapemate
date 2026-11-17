@@ -760,12 +760,12 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <div class="tabs" id="sceneTabs" role="tablist" aria-label="Scenes"></div>
     <textarea id="script" spellcheck="false" aria-label="Sides for this scene" placeholder="Paste the sides for this scene here."></textarea>
     <div class="row">
-      <label class="btn" for="file">Upload .txt / .fountain</label>
-      <input id="file" type="file" accept=".txt,.fountain,.md,text/plain" hidden>
+      <label class="btn" for="file" id="fileLabel">Upload PDF / Word / text</label>
+      <input id="file" type="file" accept=".pdf,.docx,.doc,.txt,.fountain,.md,.rtf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,text/plain" hidden>
       <button class="btn" id="loadSample" type="button">Load example scene</button>
       <button class="btn" id="clearScript" type="button">Clear</button>
     </div>
-    <p class="hint">Paste sides in either format: <code>NAME: line</code>, or screenplay style with the character name in capitals on its own line and the dialogue under it. Parentheticals like <i>(beat)</i> are shown but not read aloud. Scene headings and action lines are skipped. For a PDF, copy the text out of it and paste here.</p>
+    <p class="hint">Paste sides in either format: <code>NAME: line</code>, or screenplay style with the character name in capitals on its own line and the dialogue under it. Parentheticals like <i>(beat)</i> are shown but not read aloud. Scene headings and action lines are skipped. You can also upload sides as a PDF, a Word file (.docx) or plain text, and the text is pulled out for you. Check it over afterwards, because some PDFs lay text out oddly.</p>
     <div class="field">
       <span class="lab">Your character in this scene</span>
       <div class="chips" id="chips"></div>
@@ -1271,7 +1271,8 @@ function parseScript(raw){
   const colonRe = /^([A-Za-z][A-Za-z0-9 .'\-]{0,28}?)\s*(\([^)]*\))?\s*:\s*(.+)$/;
   for (const line of raw.replace(/\r/g,"").split("\n")){
     const t = line.trim();
-    if (!t){ cur = null; continue; }
+    // A blank line ends a speech, except straight after a cue (Word files put a blank line between every paragraph).
+    if (!t){ if (cur && cur.fromCue && !spokenText(cur.text)) continue; cur = null; continue; }
     if (cur && cur.fromCue){
       cur.text += (cur.text ? " " : "") + t;
       continue;
@@ -1422,11 +1423,150 @@ const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'
 const fmtLine = t => esc(t).replace(/(\([^)]*\)|\[[^\]]*\])/g,'<span class="paren">$1</span>');
 
 let tScript; scriptEl.addEventListener("input", () => { clearTimeout(tScript); tScript = setTimeout(reparse, 300); });
-$("#file").addEventListener("change", e => {
-  const f = e.target.files[0]; if (!f) return;
-  if (/\.pdf$/i.test(f.name)) { toast("PDFs can't be read here yet. Open the PDF, copy the text and paste it in."); return; }
-  const r = new FileReader(); r.onload = () => { scriptEl.value = r.result; startIdx = 0; reparse(); }; r.readAsText(f);
-  e.target.value = "";
+/* ---------- reading sides from PDF and Word files ----------
+   Everything happens in the browser. pdf.js and mammoth.js load from the CDN only the first time
+   someone uploads that kind of file. */
+const PDFJS_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+const MAMMOTH_URL = "https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js";
+let PDFJS = null, MAMMOTH = null;
+async function loadPdfjs(){
+  if (!PDFJS){
+    PDFJS = import(PDFJS_URL).then(m => { m.GlobalWorkerOptions.workerSrc = PDFJS_WORKER; return m; });
+    PDFJS.catch(() => { PDFJS = null; });
+  }
+  return PDFJS;
+}
+function loadMammoth(){
+  if (window.mammoth) return Promise.resolve(window.mammoth);
+  if (!MAMMOTH){
+    MAMMOTH = new Promise((res, rej) => {
+      const sc = document.createElement("script"); sc.src = MAMMOTH_URL; sc.async = true;
+      sc.onload = () => window.mammoth ? res(window.mammoth) : rej(new Error("mammoth missing"));
+      sc.onerror = () => { sc.remove(); rej(new Error("load failed")); };
+      document.head.appendChild(sc);
+    });
+    MAMMOTH.catch(() => { MAMMOTH = null; });
+  }
+  return MAMMOTH;
+}
+/* Rebuilds the lines of each page from pdf.js text pieces, and leaves a blank line wherever the
+   gap between lines is bigger than normal, so speeches and action stay separate like the page. */
+function pdfPageLines(items){
+  const bits = [];
+  for (const it of items){
+    if (!it.str || !it.transform) continue;
+    const [a, b, c, d, x, y] = it.transform;
+    if (Math.abs(b) > 0.01 || Math.abs(c) > 0.01) continue;   // rotated text, usually a watermark
+    const h = Math.abs(d) || it.height || 10;
+    bits.push({s: it.str, x, y, w: it.width || 0, h});
+  }
+  bits.sort((p, q) => (q.y - p.y) || (p.x - q.x));
+  const rows = [];
+  for (const t of bits){
+    const r = rows.find(r => Math.abs(r.y - t.y) < Math.min(r.h, t.h) * 0.5);
+    if (r){ r.bits.push(t); r.h = Math.max(r.h, t.h); } else rows.push({y: t.y, h: t.h, bits: [t]});
+  }
+  rows.sort((p, q) => q.y - p.y);
+  const out = [];
+  for (const r of rows){
+    r.bits.sort((p, q) => p.x - q.x);
+    let txt = "", end = null;
+    for (const t of r.bits){
+      if (end !== null && t.x - end > t.h * 0.15 && !/\s$/.test(txt) && !/^\s/.test(t.s)) txt += " ";
+      txt += t.s; end = t.x + t.w;
+    }
+    txt = txt.replace(/\s+/g, " ").trim();
+    if (txt) out.push({y: r.y, h: r.h, txt});
+  }
+  const gaps = [];
+  for (let i = 1; i < out.length; i++) gaps.push(out[i-1].y - out[i].y);
+  const sorted = gaps.filter(g => g > 0).sort((p, q) => p - q);
+  const step = sorted.length ? sorted[Math.floor(sorted.length * 0.25)] : 12;   // normal single line spacing
+  const lines = [];
+  out.forEach((l, i) => {
+    if (i && out[i-1].y - l.y > step * 1.5) lines.push("");
+    lines.push(l.txt);
+  });
+  return lines;
+}
+/* Removes page furniture that would confuse the reader: page numbers, (MORE), CONTINUED, scene numbers. */
+function tidySides(lines){
+  const keep = [];
+  let more = false;   // a speech broke across the page with (MORE), so glue it back to its (CONT'D) half
+  for (let t of lines){
+    t = t.normalize("NFKC").replace(/\u00a0/g, " ").trim();
+    if (/^(page\s*)?\d{1,3}[A-Z]?\.?$/i.test(t)) continue;
+    if (/^\(\s*MORE\s*\)$/.test(t)){ more = true; continue; }
+    if (/^\(?\s*(MORE|CONTINUED)\s*\)?$/.test(t)) continue;
+    if (more && t){
+      more = false;
+      if (/\(\s*CONT['’]?D\s*\)/i.test(t) && isCue(t)){ while (keep.length && !keep[keep.length-1]) keep.pop(); continue; }
+    }
+    if (/^(\d+[A-Z]?\s+)?CONTINUED:?(\s*\(\d+\))?(\s+\d+[A-Z]?)?$/i.test(t)) continue;
+    if (/^\d+[A-Z]?\.?\s+(INT|EXT|I\/E)\b/i.test(t)) t = t.replace(/^\d+[A-Z]?\.?\s+/, "").replace(/\s+\*?\d+[A-Z]?\.?\*?$/, "");
+    keep.push(t);
+  }
+  return keep.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+async function readPdf(file){
+  let pdfjs;
+  try { pdfjs = await loadPdfjs(); } catch(e){ throw new Error("Couldn't load the PDF reader. Check your internet connection and try again."); }
+  let doc;
+  try { doc = await pdfjs.getDocument({data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false}).promise; }
+  catch(e){
+    if (e && e.name === "PasswordException") throw new Error("This PDF is password protected. Open it, copy the text and paste it in.");
+    throw new Error("This PDF couldn't be opened. It may be damaged. Try copying the text out of it instead.");
+  }
+  let lines = [];
+  for (let p = 1; p <= doc.numPages; p++){
+    const page = await doc.getPage(p);
+    const tc = await page.getTextContent();
+    if (p > 1) lines.push("");
+    lines = lines.concat(pdfPageLines(tc.items));
+  }
+  doc.destroy && doc.destroy();
+  const text = tidySides(lines);
+  if (text.replace(/\s/g, "").length < 20) throw new Error("This PDF looks like a scanned image, so there is no text in it to read. Ask for a text PDF or Word file, or type the sides in.");
+  return text;
+}
+async function readDocx(file){
+  let mm;
+  try { mm = await loadMammoth(); } catch(e){ throw new Error("Couldn't load the Word reader. Check your internet connection and try again."); }
+  let res;
+  try { res = await mm.extractRawText({arrayBuffer: await file.arrayBuffer()}); }
+  catch(e){ throw new Error("This Word file couldn't be opened. If it's an old .doc file, save it as .docx or PDF and upload that."); }
+  const text = tidySides(res.value.replace(/\r/g, "").split("\n"));
+  if (!text) throw new Error("No text was found in this Word file.");
+  return text;
+}
+async function readSidesFile(f){
+  const name = f.name || "";
+  if (/\.pdf$/i.test(name) || f.type === "application/pdf") return readPdf(f);
+  if (/\.docx$/i.test(name) || f.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") return readDocx(f);
+  if (/\.(doc|rtf|pages|odt)$/i.test(name) || f.type === "application/msword")
+    throw new Error("This file type can't be read in the browser. In Word, choose File, Save As, and save it as .docx or PDF, then upload that.");
+  const text = await f.text();
+  if (/^\{\\rtf/.test(text) || /\u0000/.test(text.slice(0, 2000)))
+    throw new Error("This file isn't plain text. Save it as .docx or PDF and upload that.");
+  return text;
+}
+$("#file").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  const lab = $("#fileLabel"), was = lab.textContent;
+  const slow = /\.(pdf|docx)$/i.test(f.name);
+  if (slow){ lab.textContent = "Reading…"; lab.setAttribute("aria-busy", "true"); }
+  try {
+    const text = await readSidesFile(f);
+    scriptEl.value = text; startIdx = 0; reparse();
+    const n = parseScript(text).length;
+    toast(n ? `Read ${n} line${n === 1 ? "" : "s"} of dialogue from ${f.name}. Check them below.`
+            : `Text read from ${f.name}, but no dialogue was found. Check the format below.`);
+  } catch(err){
+    toast(err && err.message ? err.message : "That file couldn't be read.", 7000);
+  } finally {
+    lab.textContent = was; lab.removeAttribute("aria-busy");
+  }
 });
 $("#loadSample").onclick = () => { scriptEl.value = SAMPLE; startIdx = 0; reparse(); };
 $("#clearScript").onclick = () => { scriptEl.value = ""; startIdx = 0; reparse(); scriptEl.focus(); };
