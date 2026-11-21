@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#12161c">
 <script>/* pick the saved theme before first paint so there is no flash */
-(function(){var t="booth";try{t=localStorage.getItem("tm.theme")||t}catch(e){}if(!/^(academy|carpet|champagne|booth|draft)$/.test(t))t="booth";document.documentElement.setAttribute("data-theme",t)})();</script>
+(function(){var t="booth";try{t=localStorage.getItem("tm.theme")||t}catch(e){}if(!/^(academy|carpet|champagne|booth|draft)$/.test(t))t="booth";document.documentElement.setAttribute("data-theme",t)})();
+(function(){var l="icons";try{l=localStorage.getItem("tm.layout")||l}catch(e){}if(/^(names|notes|steps)$/.test(l))document.documentElement.setAttribute("data-layout",l)})();</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>TapeMate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,36 +90,9 @@ a.btn{display:inline-block;text-decoration:none;color:var(--fg)}
 .seg button{flex:1;background:var(--bg);border:0;padding:9px 8px;font-size:13px;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--raise);color:var(--accent);font-weight:700}
-.elbox{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--bg)}
-.elbox label{font-size:13px;font-weight:500}
-.elkeyrow{display:flex;gap:8px;flex-wrap:wrap}
-.elkeyrow input{flex:1 1 220px;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
-.elhow ol{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
-.elhow ol b,.elhow ol code{color:var(--fg)}
-.elbox a{color:var(--accent)}
-.elbox summary{cursor:pointer;font-size:13px;font-weight:500}
-.eltools{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:10px}
-.elfind .row{margin-top:8px;flex-wrap:wrap}
-.elfind select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 8px;width:auto;flex:1 1 150px;min-width:0}
-.elresults{display:flex;flex-direction:column;gap:6px;margin:8px 0}
-.elres{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
-.elres b{display:block;font-size:14px}
-.elres small{display:block;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.elres .btn{padding:6px 12px}
 .roombox{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px;background:var(--bg)}
 .subhead{margin:4px 0 -4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--f-ui)}
 input[type=range]{width:100%;accent-color:var(--accent)}
-.voices{display:flex;flex-direction:column;gap:8px}
-.vrow{display:grid;grid-template-columns:110px minmax(0,1fr) auto auto;gap:8px;align-items:center}
-.vrow .seg.acc button,.accall .seg button{padding:7px 10px;font-size:12px}
-.vrow .who small.dup{color:var(--accent)}
-.vrow .vnote{grid-column:1 / -1;font-size:12px;color:var(--muted);margin:-2px 0 4px}
-.vrow .vnote b{color:var(--accent);font-weight:600}
-.accall{gap:8px}
-.vrow .who{font-family:var(--f-script);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vrow select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 8px;min-width:0;width:100%}
-.vrow .who small{display:block;font-family:var(--f-ui);font-weight:400;font-size:12px;color:var(--muted)}
-.voicetip{border-left:3px solid var(--accent);padding:6px 10px;background:var(--bg);border-radius:0 8px 8px 0}
 .support{display:flex;flex-direction:column;gap:6px;font-size:13px}
 .support div{display:flex;gap:8px;align-items:flex-start}
 .dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none}
@@ -126,10 +100,6 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .cta{display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;padding-block:12px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%)}
 .cta .btn{flex:1 1 auto}
 .blocker{border-color:var(--rec);background:linear-gradient(rgba(229,72,77,.10),rgba(229,72,77,.04)),var(--panel)}
-.tip{border-color:var(--accent)}
-.tip h2{color:var(--fg);font-size:16px;text-transform:none;letter-spacing:0;display:block}
-.tip h2 b{font-family:var(--f-ui);font-size:16px;color:var(--accent)}
-.tip p{margin:0}
 .blocker.ok{border-color:var(--ok);background:linear-gradient(rgba(76,195,138,.10),rgba(76,195,138,.04)),var(--panel)}
 .blocker h2{color:var(--fg);font-size:16px;text-transform:none;letter-spacing:0}
 .blocker p{margin:0}
@@ -607,6 +577,114 @@ html[data-theme="carpet"]{--hero-img:url("https://images.unsplash.com/photo-1514
 html[data-theme="champagne"]{--hero-img:url("https://images.unsplash.com/photo-1580657274234-7339717f4541?w=1800&q=70&auto=format&fit=crop")}
 html[data-theme="booth"]{--hero-img:url("https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1800&q=70&auto=format&fit=crop")}
 html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-1586943759341-be5595944989?w=1800&q=70&auto=format&fit=crop")}
+
+/* ---------- V17: one page per sidebar button ---------- */
+#setup [data-page]:not(.on){display:none!important}
+.apptop .sp{flex:1}
+/* page headings: big, in the theme's display face, with a short rule so you always know where you are */
+#setup .card h2.pt{font-family:var(--display);font-size:clamp(28px,3.4vw,38px);line-height:1.1;letter-spacing:.01em;text-transform:none;color:var(--fg);font-weight:700;display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin:0 0 2px}
+#setup .card h2.pt::after{content:"";width:44px;height:3px;border-radius:2px;background:var(--accent)}
+#setup .shots-head{align-items:flex-end}
+html[data-theme="booth"] #setup .card h2.pt{font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(34px,4vw,46px)}
+html[data-theme="academy"] #setup .card h2.pt{text-transform:uppercase;letter-spacing:.08em;font-size:clamp(24px,2.8vw,32px);color:#e9c96a}
+html[data-theme="carpet"] #setup .card h2.pt{font-style:italic;font-weight:500}
+html[data-theme="champagne"] #setup .card h2.pt{font-weight:600;font-size:clamp(32px,3.8vw,42px)}
+html[data-theme="draft"] #setup .card h2.pt{text-transform:uppercase;letter-spacing:.04em;font-size:clamp(24px,2.8vw,32px)}
+/* the welcome note sits above the audition sheet */
+.welcome{gap:10px}
+/* Send to agent: a rich red in every theme */
+.btn.sendred{background:linear-gradient(180deg,#d42a33,#a5141d);border:1px solid #8c0f17;color:#fff;font-weight:700;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 6px 18px -8px rgba(200,20,30,.75)}
+.btn.sendred:hover{background:linear-gradient(180deg,#e0353e,#b3171f);border-color:#8c0f17}
+.btn.sendred:disabled{background:linear-gradient(180deg,#d42a33,#a5141d);opacity:.5}
+.btn.sendred .i{color:#fff}
+html[data-theme] .btn.sendred{text-transform:none;letter-spacing:.01em}
+/* Upload: outlined in the theme's button colour */
+#fileLabel{border:1.5px solid var(--accent);color:var(--fg);cursor:pointer}
+#fileLabel:hover{background:color-mix(in srgb,var(--accent) 12%,var(--raise));border-color:var(--accent)}
+/* recording the reader's lines */
+.rvbox{display:flex;flex-direction:column;gap:12px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px;background:var(--bg)}
+.rvbox h3{margin:0 0 4px;font-size:16px;font-family:var(--f-ui)}
+.rvscenes{align-self:flex-start}
+.rvscenes button{flex:0 0 auto;padding:7px 14px}
+.rvlines{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;background:var(--panel);max-height:460px;overflow:auto}
+.rvrow{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);font-family:var(--f-script);font-size:14px}
+.rvrow:last-child{border-bottom:0}
+.rvrow .who{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rvrow .who small{display:block;font-family:var(--f-ui);font-weight:400;font-size:11px;color:var(--muted)}
+.rvrow.mine{opacity:.55}
+.rvrow.mine .acts{display:none}
+.rvrow .acts{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.rvrow .acts .btn{padding:6px 12px;font-size:12.5px;font-family:var(--f-ui)}
+.rvrow.ok .who::before{content:"\2713  ";color:var(--accent)}
+.rvrow.live{background:color-mix(in srgb,var(--rec) 10%,transparent);box-shadow:inset 3px 0 0 var(--rec)}
+.rvrow .btn.rec{background:var(--rec);border-color:var(--rec);color:#fff}
+.rvrow .rvdel{padding:6px 10px!important;color:var(--muted)}
+.rvtime{font:600 12px/1 var(--f-ui);color:var(--rec);min-width:44px;font-variant-numeric:tabular-nums}
+@media (max-width:620px){
+  .rvrow{grid-template-columns:1fr;gap:6px}
+  .rvrow .acts{justify-content:flex-start}
+}
+
+/* ===== V18: Layout button: icons only, or a sidebar with names (names / notes / steps) ===== */
+:root{--rail-name:#e9ebee;--rail-num:var(--accent);--rail-hint:var(--rail-ink)}
+html[data-theme="academy"]{--rail-name:#efe4c6}
+html[data-theme="carpet"]{--rail-name:#fff1dc;--rail-num:#ffcf6e}
+html[data-theme="champagne"]{--rail-name:#2d261b;--rail-hint:#857660}
+html[data-theme="draft"]{--rail-name:#f3f0e8;--rail-num:#ef6f5f}
+.lbtn{height:38px;border-radius:999px;border:1px solid color-mix(in srgb,var(--top-ink) 22%,transparent);display:inline-flex;align-items:center;gap:7px;padding:0 14px 0 11px;color:var(--top-ink);background:var(--top-field);font:600 13px var(--f-ui);letter-spacing:.01em;white-space:nowrap}
+.lbtn[aria-expanded="true"]{background:var(--accent-fill);color:var(--accent-fill-ink);border-color:transparent}
+.lpop{position:fixed;top:64px;right:16px;z-index:30;width:min(330px,calc(100vw - 24px));background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 24px 60px -12px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:6px;font-family:var(--f-ui)}
+.lpop h3{margin:0 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lopt{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;text-align:left;padding:8px 10px 8px 8px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg);font-family:var(--f-ui)}
+.lopt:hover{border-color:var(--muted)}
+.lopt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
+.lopt svg{width:52px;height:36px;display:block;border-radius:6px;background:var(--raise)}
+.lopt b{display:block;font-size:14px;font-weight:600}
+.lopt small{display:block;font-size:12px;line-height:1.35;color:var(--muted);margin-top:1px}
+.lpop .lnote{margin:4px 2px 0;font-size:11.5px;color:var(--muted);line-height:1.4}
+@media (max-width:760px){.lbtn{display:none}}
+
+.rail .lbl,.rail .hint,.rail .num,.rail .rhead,.rail .intro,.rail .group{display:none}
+body,.rail{transition:padding-left .25s ease,width .25s ease}
+html[data-layout] .rail{align-items:stretch;overflow-y:auto;scrollbar-width:thin}
+html[data-layout] .rail a::after{display:none}
+html[data-layout] .rail .mark{display:flex;align-items:center;gap:10px;width:auto;padding-left:7px;flex:none}
+html[data-layout] .rail .mark .rhead{display:block;font-family:var(--display);font-size:20px;color:var(--rail-name);white-space:nowrap}
+html[data-layout] .rail a{flex:none;font-family:var(--f-ui);text-align:left;justify-items:start}
+html[data-layout] .rail a .lbl{display:block;color:var(--rail-name)}
+html[data-layout] .rail a .hint{display:block;color:var(--rail-hint)}
+html[data-layout] .rail a.on .lbl,html[data-layout] .rail a.on .hint{color:var(--rail-on-ink)}
+html[data-layout] .rail a.on .hint{opacity:.85}
+html[data-layout] .rail hr{width:auto;margin:4px 6px}
+html[data-layout] .rail a:hover .lbl{color:var(--rail-on-ink)}
+/* Names (option A): a column with the page name beside each icon */
+html[data-layout="names"] body{padding-left:224px}
+html[data-layout="names"] .rail{width:224px;padding:11px 12px 12px}
+html[data-layout="names"] .rail a{width:auto;display:flex;align-items:center;gap:12px;padding:0 10px;font-size:14px;font-weight:500}
+html[data-layout="names"] .rail a .lbl{white-space:nowrap}
+html[data-layout="names"] .rail a .hint{display:none}
+/* Names and notes (option B): a short line on what each page is for */
+html[data-layout="notes"] body{padding-left:280px}
+html[data-layout="notes"] .rail{width:280px;padding:11px 12px 12px;gap:4px}
+html[data-layout="notes"] .rail a{width:auto;height:auto;display:grid;grid-template-columns:20px 1fr;column-gap:12px;align-items:start;padding:9px 12px;border-radius:12px}
+html[data-layout="notes"] .rail a svg{grid-row:1/3;margin-top:1px}
+html[data-layout="notes"] .rail a .lbl{font-size:14px;font-weight:600;line-height:1.25}
+html[data-layout="notes"] .rail a .hint{font-size:12px;line-height:1.35;margin-top:2px}
+/* Step by step (option C): numbered in the order you make a tape, then your setup */
+html[data-layout="steps"] body{padding-left:300px}
+html[data-layout="steps"] .rail{width:300px;padding:11px 14px 14px;gap:2px}
+html[data-layout="steps"] .rail .mark{margin-bottom:2px}
+html[data-layout="steps"] .rail .intro{display:block;font:12px/1.4 var(--f-ui);color:var(--rail-hint);padding:0 8px 4px;flex:none}
+html[data-layout="steps"] .rail .group{display:block;font:600 10.5px/1 var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--rail-ink);opacity:.85;padding:12px 8px 6px;flex:none}
+html[data-layout="steps"] .rail a{width:auto;height:auto;display:grid;grid-template-columns:26px 1fr 20px;column-gap:12px;align-items:center;padding:8px 10px;border-radius:12px}
+html[data-layout="steps"] .rail a .num{display:grid;place-items:center;width:26px;height:26px;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--rail-num) 75%,transparent);color:var(--rail-num);font:600 12px var(--f-ui);grid-row:1/3;grid-column:1}
+html[data-layout="steps"] .rail a .num.dot{border-style:dashed;border-color:color-mix(in srgb,var(--rail-ink) 60%,transparent)}
+html[data-layout="steps"] .rail a svg{grid-column:3;grid-row:1/3;opacity:.7}
+html[data-layout="steps"] .rail a .lbl{font-size:14px;font-weight:600;grid-column:2;line-height:1.3}
+html[data-layout="steps"] .rail a .hint{font-size:12px;line-height:1.35;grid-column:2}
+html[data-layout="steps"] .rail a.on .num{color:var(--rail-on-ink);border-color:var(--rail-on-ink)}
+html[data-layout="steps"] .rail hr,html[data-layout="steps"] .rail .sp{display:none}
+@media (max-width:760px){html[data-layout] body{padding-left:0}}
 </style>
 </head>
 <body>
@@ -631,29 +709,35 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
 <!-- ================= APP SHELL: sidebar + top bar ================= -->
 <nav class="rail" aria-label="Sections">
   <span class="mark" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 10 3.3 6.2a1 1 0 0 1 .8-1.2l13.7-2.4a1 1 0 0 1 1.2.8L19.6 6 4 10"/><path d="m8 4.4 2.6 3.4M13 3.5l2.6 3.4"/></svg></span>
-  <a href="#helloCard" data-go="helloCard" data-tip="Audition sheet" aria-label="Audition sheet"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></a>
-  <a href="#sidesCard" data-go="sidesCard" data-tip="Sides" aria-label="Sides"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></a>
-  <a href="#rhCard" data-go="rhCard" data-tip="Rehearse" aria-label="Rehearse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></a>
-  <a href="#shotsCard" data-go="shotsCard" data-tip="Your takes" aria-label="Your takes"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></a>
-  <a href="#libCard" data-go="libCard" data-tip="Library" aria-label="Library"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg></a>
-  <a href="#readerCard" data-go="readerCard" data-tip="Reader" aria-label="Reader"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 10.5v3"/></svg></a>
-  <a href="#camCard" data-go="camCard" data-tip="Camera and prompter" aria-label="Camera and prompter"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10 6-3.5v11l-6-3.5"/></svg></a>
+  <a href="#sheet" data-go="sheet" data-tip="Audition sheet" aria-label="Audition sheet"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></a>
+  <a href="#sides" data-go="sides" data-tip="Sides" aria-label="Sides"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></a>
+  <a href="#rehearse" data-go="rehearse" data-tip="Rehearse" aria-label="Rehearse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></a>
+  <a href="#takes" data-go="takes" data-tip="Your takes" aria-label="Your takes"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></a>
+  <a href="#library" data-go="library" data-tip="Library" aria-label="Library"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg></a>
+  <a href="#reader" data-go="reader" data-tip="Reader" aria-label="Reader"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 10.5v3"/></svg></a>
+  <a href="#camera" data-go="camera" data-tip="Camera and prompter" aria-label="Camera and prompter"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10 6-3.5v11l-6-3.5"/></svg></a>
   <span class="sp"></span>
   <hr>
-  <a href="#shotsCard" data-go="send" data-tip="Send to agent" aria-label="Send to agent"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg></a>
+  <a href="#takes" data-go="send" data-tip="Send to agent" aria-label="Send to agent"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg></a>
 </nav>
 <nav class="mnav" id="mnav" aria-label="Sections"></nav>
 <header class="apptop">
   <h1 class="brand">Tape<span>Mate</span></h1>
   <span class="slash" aria-hidden="true">/</span>
   <span class="crumb"><span id="tbProd">New audition</span> <span class="badge" id="tbBadge">Self-tape</span></span>
-  <div class="acts">
-    <button class="btn big" id="goRehearse" type="button">Rehearse Scene 1</button>
-    <button class="btn rec big" id="goRecord" type="button">● Record Introduction</button>
-  </div>
+  <span class="sp"></span>
+  <button class="lbtn" id="layoutBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="layoutPop" title="Change how the sidebar looks"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M12.5 9h5M12.5 12h5M12.5 15h3"/></svg><span>Layout</span></button>
   <button class="ibtn" id="themeBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="themePop" title="Change theme"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c1 0 1.6-.8 1.6-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.2" r="1.2" fill="currentColor"/><circle cx="15" cy="7.6" r="1.2" fill="currentColor"/></svg><span class="sr" hidden>Change theme</span></button>
   <span class="avatar" id="tbAvatar" title="You">TM</span>
 </header>
+<div class="lpop" id="layoutPop" hidden role="dialog" aria-label="Choose a layout">
+  <h3>Layout</h3>
+  <button type="button" class="lopt" data-layout="icons" aria-pressed="false"><svg viewBox="0 0 52 36" aria-hidden="true"><rect x="0" y="0" width="10" height="36" fill="currentColor" opacity=".18"/><rect x="3" y="6" width="4" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="3" y="12" width="4" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="3" y="18" width="4" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="3" y="24" width="4" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="3" y="30" width="4" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="16" y="6" width="30" height="8" rx="2" fill="currentColor" opacity=".12"/><rect x="16" y="17" width="30" height="13" rx="2" fill="currentColor" opacity=".12"/></svg><span><b>Icons only</b><small>A slim bar of icons. Hover one to see its name.</small></span></button>
+  <button type="button" class="lopt" data-layout="names" aria-pressed="false"><svg viewBox="0 0 52 36" aria-hidden="true"><rect x="0" y="0" width="20" height="36" fill="currentColor" opacity=".18"/><rect x="4" y="6" width="12" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="12" width="12" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="18" width="12" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="24" width="12" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="30" width="12" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="26" y="6" width="20" height="8" rx="2" fill="currentColor" opacity=".12"/><rect x="26" y="17" width="20" height="13" rx="2" fill="currentColor" opacity=".12"/></svg><span><b>Names</b><small>Each icon with its page name beside it.</small></span></button>
+  <button type="button" class="lopt" data-layout="notes" aria-pressed="false"><svg viewBox="0 0 52 36" aria-hidden="true"><rect x="0" y="0" width="24" height="36" fill="currentColor" opacity=".18"/><rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="12" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="18" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="24" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="4" y="30" width="16" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="30" y="6" width="16" height="8" rx="2" fill="currentColor" opacity=".12"/><rect x="30" y="17" width="16" height="13" rx="2" fill="currentColor" opacity=".12"/></svg><span><b>Names and notes</b><small>A short line on what each page is for.</small></span></button>
+  <button type="button" class="lopt" data-layout="steps" aria-pressed="false"><svg viewBox="0 0 52 36" aria-hidden="true"><rect x="0" y="0" width="26" height="36" fill="currentColor" opacity=".18"/><circle cx="5" cy="7" r="1.8" fill="none" stroke="currentColor" stroke-width=".9"/><rect x="9" y="6" width="13" height="2" rx="1" fill="currentColor" opacity=".7"/><circle cx="5" cy="13" r="1.8" fill="none" stroke="currentColor" stroke-width=".9"/><rect x="9" y="12" width="13" height="2" rx="1" fill="currentColor" opacity=".7"/><circle cx="5" cy="19" r="1.8" fill="none" stroke="currentColor" stroke-width=".9"/><rect x="9" y="18" width="13" height="2" rx="1" fill="currentColor" opacity=".7"/><circle cx="5" cy="25" r="1.8" fill="none" stroke="currentColor" stroke-width=".9"/><rect x="9" y="24" width="13" height="2" rx="1" fill="currentColor" opacity=".7"/><circle cx="5" cy="31" r="1.8" fill="none" stroke="currentColor" stroke-width=".9"/><rect x="9" y="30" width="13" height="2" rx="1" fill="currentColor" opacity=".7"/><rect x="32" y="6" width="14" height="8" rx="2" fill="currentColor" opacity=".12"/><rect x="32" y="17" width="14" height="13" rx="2" fill="currentColor" opacity=".12"/></svg><span><b>Step by step</b><small>Numbered in the order you make a tape.</small></span></button>
+  <p class="lnote">Try each one. TapeMate remembers the one you pick.</p>
+</div>
 <div class="tpop" id="themePop" hidden role="dialog" aria-label="Choose a theme">
   <h3>Theme</h3>
   <div class="tgrid" data-tgrid></div>
@@ -661,21 +745,23 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
 
 <!-- ================= SETUP ================= -->
 <main id="setup" class="wrap">
-  <section class="hero" aria-label="Your audition">
+  <section class="hero" aria-label="Your audition" data-page="sheet">
     <div>
       <p class="eyebrow" id="heroEyebrow">Self-tape</p>
       <h2 id="heroTitle">Your audition</h2>
       <p class="meta" id="heroMeta"></p>
     </div>
-    <span class="credit" id="heroCredit"></span>
   </section>
   <div class="dash">
   <div class="col-main">
 
-  <section class="card tip" id="fileTip" hidden>
-    <h2>When Chrome asks for the camera and mic, choose <b>“Allow while visiting the site”</b></h2>
-    <p class="hint" style="color:var(--fg)">You're running TapeMate from a file on this computer. If you pick “Allow this time”, Chrome asks again for every take and every time the reader starts listening. “Allow while visiting the site” makes it ask once.</p>
-    <p class="hint">Already picked the wrong one? Click the icon at the left of the address bar, set Camera and Microphone to Allow, then reload.</p>
+  <section class="card welcome" aria-labelledby="h-welcome" id="welcomeCard" data-page="sheet">
+    <h2 id="h-welcome" class="hello">Hello, welcome to TapeMate.</h2>
+    <p class="lede">I'm excited to get you ready for your next self-tape. Fill in your audition sheet below once, and every recording is labelled the way your agency wants it.</p>
+    <div class="themepick" id="themeInline" hidden>
+      <span class="lab">First, pick your look. You can change it any time with the palette button at the top.</span>
+      <div class="tgrid" data-tgrid></div>
+    </div>
   </section>
 
   <section class="card blocker" id="blocker" hidden role="alert" aria-live="polite">
@@ -686,13 +772,8 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     </div>
   </section>
 
-  <section class="card" aria-labelledby="h-hello" id="helloCard">
-    <h2 id="h-hello" class="hello">Hello, welcome to TapeMate.</h2>
-    <p class="lede">I'm excited to get you ready for your next self-tape. Fill in this sheet once, and every recording is labelled the way your agency wants it.</p>
-    <div class="themepick" id="themeInline" hidden>
-      <span class="lab">First, pick your look. You can change it any time with the palette button at the top.</span>
-      <div class="tgrid" data-tgrid></div>
-    </div>
+  <section class="card" aria-labelledby="h-hello" id="helloCard" data-page="sheet">
+    <h2 id="h-hello" class="pt">Audition sheet</h2>
     <div class="sheet">
       <div class="field"><label for="pName">Your name</label><input id="pName" autocomplete="name" placeholder="e.g. Grant Ross"></div>
       <div class="field"><label for="pAgency">Agency</label><input id="pAgency" autocomplete="organization" placeholder="e.g. Persh Artists"></div>
@@ -712,8 +793,8 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <div class="namepreview"><span class="lab">Your files will be named like this</span><code id="namePreview"></code></div>
   </section>
 
-  <section class="card" aria-labelledby="h-script" id="sidesCard">
-    <h2 id="h-script">Sides</h2>
+  <section class="card" aria-labelledby="h-script" id="sidesCard" data-page="sides">
+    <h2 id="h-script" class="pt">Sides</h2>
     <div class="tabs" id="sceneTabs" role="tablist" aria-label="Scenes"></div>
     <textarea id="script" spellcheck="false" aria-label="Sides for this scene" placeholder="Paste the sides for this scene here."></textarea>
     <div class="row">
@@ -734,8 +815,8 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <p class="hint">Tap a line to start the take from there. Your lines are highlighted.</p>
   </section>
 
-  <section class="card" aria-labelledby="h-rh" id="rhCard">
-    <div class="shots-head"><h2 id="h-rh">Rehearse</h2><span class="hint">Nothing here goes into your audition</span></div>
+  <section class="card" aria-labelledby="h-rh" id="rhCard" data-page="rehearse">
+    <div class="shots-head"><h2 id="h-rh" class="pt">Rehearse</h2><span class="hint">Nothing here goes into your audition</span></div>
     <p class="lede">Run the scene with your reader as often as you like before you tape. Get off-book, drill the tricky bits, and do a mock take to watch back.</p>
     <div class="tabs" id="rhScenes" role="tablist" aria-label="Scene to rehearse"></div>
     <p class="rhwho" id="rhWho"></p>
@@ -785,23 +866,8 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <p class="hint" id="rhHistory"></p>
   </section>
 
-  <section class="card" aria-labelledby="h-quality" id="qualityCard">
-    <div class="shots-head"><h2 id="h-quality">Quality</h2><span class="hint">Every file stays under 100 MB</span></div>
-    <div class="quality">
-      <div class="quality-top">
-        <span class="now">Recording at <b id="qualityNow">720p</b></span>
-        <div class="seg" id="quality" aria-label="Recording quality">
-          <button type="button" data-v="auto">Auto</button>
-          <button type="button" data-v="1080">1080p</button>
-          <button type="button" data-v="720">720p</button>
-        </div>
-      </div>
-      <p class="hint" id="qualityHint"></p>
-    </div>
-  </section>
-
-  <section class="card" aria-labelledby="h-shots" id="shotsCard">
-    <div class="shots-head"><h2 id="h-shots">Your audition</h2><span class="hint" id="shotCount"></span></div>
+  <section class="card" aria-labelledby="h-shots" id="shotsCard" data-page="takes">
+    <div class="shots-head"><h2 id="h-shots" class="pt">Your takes</h2><span class="hint" id="shotCount"></span></div>
     <div class="shotlist" id="shotList"></div>
     <div class="budget">
       <div class="budget-top"><span>Total size of all files</span><span class="size" id="budgetText"></span></div>
@@ -809,7 +875,7 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
       <p class="hint" id="budgetHint"></p>
       <div class="bar" id="shrinkBar" hidden><b id="shrinkFill"></b></div>
       <div class="row">
-        <button class="btn primary" id="sendAgent" type="button" aria-expanded="false" aria-controls="sendPanel">Send to agent</button>
+        <button class="btn sendred" id="sendAgent" type="button" aria-expanded="false" aria-controls="sendPanel">Send to agent</button>
         <button class="btn" id="dlAll" type="button">Download all</button>
         <button class="btn" id="shrink" type="button">Shrink to fit under 100 MB</button>
         <button class="btn" id="shrinkCancel" type="button" hidden>Stop shrinking</button>
@@ -846,8 +912,23 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     <input id="hsFile" type="file" accept="image/*" hidden>
   </section>
 
-  <section class="card" aria-labelledby="h-lib" id="libCard">
-    <div class="shots-head"><h2 id="h-lib">Your library</h2><span class="hint" id="libCount"></span></div>
+  <section class="card" aria-labelledby="h-quality" id="qualityCard" data-page="takes">
+    <div class="shots-head"><h2 id="h-quality">Quality</h2><span class="hint">Every file stays under 100 MB</span></div>
+    <div class="quality">
+      <div class="quality-top">
+        <span class="now">Recording at <b id="qualityNow">720p</b></span>
+        <div class="seg" id="quality" aria-label="Recording quality">
+          <button type="button" data-v="auto">Auto</button>
+          <button type="button" data-v="1080">1080p</button>
+          <button type="button" data-v="720">720p</button>
+        </div>
+      </div>
+      <p class="hint" id="qualityHint"></p>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-lib" id="libCard" data-page="library">
+    <div class="shots-head"><h2 id="h-lib" class="pt">Library</h2><span class="hint" id="libCount"></span></div>
     <div class="lib" id="libList"></div>
     <p class="hint" id="libEmpty">When you start a new audition, the one you've just done is saved here with its date. Nothing is deleted unless you delete it.</p>
     <details class="where">
@@ -862,12 +943,12 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
     </details>
   </section>
 
-  <section class="card" aria-labelledby="h-reader" id="readerCard">
-    <h2 id="h-reader">Reader</h2>
+  <section class="card" aria-labelledby="h-reader" id="readerCard" data-page="reader">
+    <h2 id="h-reader" class="pt">Reader</h2>
     <div class="field">
       <span class="lab">Who reads the other parts in your takes?</span>
       <div class="seg" id="readerWho">
-        <button type="button" data-v="app">App voices</button>
+        <button type="button" data-v="app">My recorded voice</button>
         <button type="button" data-v="room">Reader in the room</button>
       </div>
       <p class="hint" id="readerWhoHint"></p>
@@ -892,7 +973,17 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
         </div>
       </div>
     </div>
-    <h3 class="subhead" id="appVoicesHead" hidden>App voices, still used when you Rehearse</h3>
+    <h3 class="subhead" id="appVoicesHead" hidden>Your recorded reader, still used when you Rehearse</h3>
+    <div class="rvbox" id="rvBox">
+      <div class="rvhead">
+        <div><h3>Record the other characters' lines</h3>
+        <p class="hint">Read each line the way the other character would say it. Tap Stop (or press the space bar) as soon as you finish. TapeMate trims the silence and saves it in this browser, so you only do it once.</p></div>
+      </div>
+      <div class="seg rvscenes" id="rvScenes" hidden></div>
+      <div class="row"><button class="btn primary" id="rvAll" type="button" hidden>Record all the reader's lines</button><span class="hint" id="rvCount"></span></div>
+      <div class="rvlines" id="rvLines"></div>
+      <p class="hint">Lines you haven't recorded become a silent pause the length of the line, so the scene keeps moving.</p>
+    </div>
     <div class="grid">
       <div class="field">
         <span class="lab">How it knows you've finished a line</span>
@@ -923,80 +1014,10 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
         <select id="lang"></select>
       </div>
     </div>
-    <div class="field">
-      <span class="lab">Reader voices</span>
-      <div class="seg" id="engine">
-        <button type="button" data-v="browser">Built-in (free)</button>
-        <button type="button" data-v="eleven">ElevenLabs</button>
-      </div>
-      <div class="elbox" id="elBox" hidden>
-        <label for="elKey">ElevenLabs API key</label>
-        <div class="elkeyrow">
-          <input id="elKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste your ElevenLabs API key">
-          <button class="btn primary" id="elSave" type="button">Save key</button>
-          <button class="btn" id="elForget" type="button" hidden>Remove</button>
-        </div>
-        <p class="hint" id="elStatus" role="status"></p>
-        <p class="hint">Your key is saved only in this browser on this device and is only ever sent to ElevenLabs. It is never part of TapeMate's code or your audition files.</p>
-        <details class="elhow" id="elHow">
-          <summary>How to get a key</summary>
-          <ol>
-            <li>Sign up at <a href="https://elevenlabs.io" target="_blank" rel="noopener">elevenlabs.io</a>. The free plan gives you 10,000 credits a month, about 10 minutes of reading.</li>
-            <li>Open <a href="https://elevenlabs.io/app/developers/api-keys" target="_blank" rel="noopener">API keys</a>. If that link has moved, look under Developers in the left menu.</li>
-            <li>Tap <b>Create API key</b> and name it TapeMate. Turn on <b>Restrict key</b> and allow <b>Text to Speech</b>, <b>Voices: Read</b> and, to see your credits here, <b>User: Read</b>. Allow <b>Voices: Write</b> too if you want to add voices from inside TapeMate.</li>
-            <li>Copy the key (it starts with <code>sk_</code>), paste it above and tap Save key.</li>
-          </ol>
-        </details>
-        <div class="eltools" id="elTools" hidden>
-          <div class="field">
-            <span class="lab">Voice model</span>
-            <div class="seg" id="elModel">
-              <button type="button" data-v="v2">Most natural</button>
-              <button type="button" data-v="flash">Faster, half the credits</button>
-            </div>
-          </div>
-          <div class="row">
-            <button class="btn" id="elPrep" type="button">Get this scene ready</button>
-            <span class="hint" id="elPrepOut"></span>
-          </div>
-          <details class="elfind" id="elFind">
-            <summary>Find more voices, such as South African</summary>
-            <div class="row">
-              <select id="elAccent" aria-label="Accent">
-                <option value="south african">South African</option>
-                <option value="british">British</option>
-                <option value="american">American</option>
-                <option value="australian">Australian</option>
-                <option value="irish">Irish</option>
-                <option value="scottish">Scottish</option>
-                <option value="nigerian">Nigerian</option>
-                <option value="indian">Indian</option>
-              </select>
-              <select id="elGender" aria-label="Gender">
-                <option value="">Any gender</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </select>
-              <button class="btn" id="elSearch" type="button">Search</button>
-            </div>
-            <div class="elresults" id="elResults"></div>
-            <p class="hint">Adding a voice puts it in My Voices in your ElevenLabs account, and it appears in the lists below. You can also add voices on the website in the <a href="https://elevenlabs.io/app/voice-library" target="_blank" rel="noopener">Voice Library</a>. Some library voices need a paid ElevenLabs plan.</p>
-          </details>
-          <div class="row"><button class="linkbtn" id="elClear" type="button">Clear saved lines</button><span class="hint" id="elCacheOut"></span></div>
-        </div>
-      </div>
-      <p class="hint" id="voicesHint">Each character gets 5 female and 5 male voices to choose from. Picking one plays a preview.</p>
-      <div class="row accall" id="accAll" hidden>
-        <span class="hint">Everyone:</span>
-        <div class="seg"><button type="button" data-v="gb">British</button><button type="button" data-v="us">American</button></div>
-      </div>
-      <div class="voices" id="voices"></div>
-      <p class="hint voicetip" id="voiceTip" hidden></p>
-    </div>
   </section>
 
-  <section class="card" aria-labelledby="h-cam" id="camCard">
-    <h2 id="h-cam">Camera and prompter</h2>
+  <section class="card" aria-labelledby="h-cam" id="camCard" data-page="camera">
+    <h2 id="h-cam" class="pt">Camera and prompter</h2>
     <div class="grid">
       <div class="field">
         <span class="lab">Camera</span>
@@ -1022,7 +1043,7 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
         </div>
       </div>
     </div>
-    <p class="hint">Recording quality is set in the Quality box, just above Your audition. Headshots use the camera's full resolution.</p>
+    <p class="hint">Recording quality is set in the Quality box on the Your takes page. Headshots use the camera's full resolution.</p>
     <div class="row">
       <button class="btn" id="checkCam" type="button">Check camera and mic</button>
       <span class="hint" id="checkOut"></span>
@@ -1036,7 +1057,7 @@ html[data-theme="draft"]{--hero-img:url("https://images.unsplash.com/photo-15869
   </div>
   <aside class="col-side" aria-label="Tape check">
     <section class="card" id="checkCard">
-      <div class="check-h"><div><h3>Tape check</h3><small>Agency rules: each file under 100 MB</small></div><button class="btn" id="checkSend" type="button"><svg class="i" style="width:15px;height:15px;vertical-align:-3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg> Send to agent</button></div>
+      <div class="check-h"><div><h3>Tape check</h3><small>Agency rules: each file under 100 MB</small></div><button class="btn sendred" id="checkSend" type="button"><svg class="i" style="width:15px;height:15px;vertical-align:-3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg> Send to agent</button></div>
       <div id="checkRows"></div>
     </section>
     <div class="cast5" id="castCard"><h4>Reader cast</h4><div id="castRows"></div></div>
@@ -1421,244 +1442,17 @@ Partners. Now go get the keys before I come to my senses.
 `;
 
 /* ---------- settings ---------- */
-const DEF = {cue:null, audio:"headphones", silence:1300, rate:1, lang:"", facing:"user", prompt:"all", tail:"3", quality:"auto", voicePick:{},
-             reader:"app", roomLines:"none", engine:"browser", elModel:"v2", elPick:{},
+const DEF = {cue:null, audio:"headphones", silence:1300, rate:1, lang:"", facing:"user", prompt:"all", tail:"3", quality:"auto", 
+             reader:"app", roomLines:"none",
              rhMode:"lines", rhOff:"show", rhStall:"4000", rhLoop:"once"};
 let S = Object.assign({}, DEF);
 try { Object.assign(S, JSON.parse(localStorage.getItem("tm.settings")||"{}")); } catch(e){}
 const save = () => { try { localStorage.setItem("tm.settings", JSON.stringify(S)); } catch(e){} };
 
-/* ---------- ElevenLabs voices (optional) ---------- */
-// The actor pastes their own key. It lives only in this browser's storage, is never part of the
-// page's code (the site is public), and is only ever sent to api.elevenlabs.io.
-const EL_API = "https://api.elevenlabs.io";
-const EL_KEY = "tm.elevenKey", EL_VOICES = "tm.elevenVoices";
-const EL = {voices: [], cast: {}, prepping: false, blocked: null, warned: 0, inflight: new Map(), active: 0, queue: [], stop: null};
-try { EL.voices = JSON.parse(localStorage.getItem(EL_VOICES) || "[]"); } catch(e){}
-function elKey(){ try { return localStorage.getItem(EL_KEY) || ""; } catch(e){ return ""; } }
-function elOn(){ return S.engine === "eleven" && !!elKey() && EL.voices.length > 0; }
-const elModelId = () => S.elModel === "flash" ? "eleven_flash_v2_5" : "eleven_multilingual_v2";
-const elRate = () => S.elModel === "flash" ? 0.5 : 1;            // credits per character
-const elErr = (code, msg = "", http = 0) => Object.assign(new Error(code), {code: String(code), msg: String(msg || ""), http});
-async function elFetch(path, opts = {}){
-  const key = elKey(); if (!key) throw elErr("nokey");
-  let r;
-  try { r = await fetch(EL_API + path, Object.assign({}, opts, {headers: Object.assign({"xi-api-key": key}, opts.headers || {})})); }
-  catch(e){ throw elErr("network"); }
-  if (!r.ok){
-    let d = null; try { d = (await r.json()).detail; } catch(e){}
-    const code = d && typeof d === "object" ? (d.status || d.code || "") : "";
-    const msg = d && typeof d === "object" ? (d.message || "") : typeof d === "string" ? d : "";
-    throw elErr(code || "http" + r.status, msg, r.status);
-  }
-  return r;
-}
-/* Plain words for what went wrong. */
-function elExplain(e){
-  const c = (e && e.code) || "", m = (e && e.msg) || "", both = c + " " + m;
-  if (c === "nokey") return "Add your ElevenLabs key first.";
-  if (c === "network") return "Couldn't reach ElevenLabs. Check your internet connection.";
-  if (c === "play") return "This browser wouldn't play the ElevenLabs audio.";
-  if (/quota|credits? (have )?run out|insufficient|not enough credits/i.test(both)) return "Your ElevenLabs credits have run out for now. Lines already saved on this device still play.";
-  if (/invalid_api_key|invalid api key|api key.*(invalid|not found)/i.test(both)) return "ElevenLabs didn't accept this key. Check that you copied all of it.";
-  if (/missing_permission|permission/i.test(both)) return ("This key isn't allowed to do that. " + m).trim();
-  if (e && e.http === 402 || /payment|paid plan|subscription|upgrade/i.test(both)) return ("This needs a paid ElevenLabs plan. " + m).trim();
-  if (e && e.http === 429 || /too_many|rate.?limit|concurrent/i.test(both)) return "ElevenLabs is busy right now. Try again in a moment.";
-  if (/voice_not_found|voice.*not found/i.test(both)) return "That voice isn't in your ElevenLabs account any more. Pick another one.";
-  return m ? "ElevenLabs: " + m : `ElevenLabs didn't answer (${c}).`;
-}
-function elNorm(v){
-  const L = v.labels || {};
-  const gs = String(L.gender || v.gender || "");
-  return {
-    id: v.voice_id, name: v.name || "Voice",
-    acc: String(L.accent || v.accent || "").toLowerCase().replace(/[-_]+/g, " ").trim(),
-    g: /^f/i.test(gs) ? "f" : /^m/i.test(gs) ? "m" : "",
-    age: String(L.age || v.age || "").replace(/_/g, " "),
-    desc: String(L.description || L.descriptive || v.descriptive || "").replace(/_/g, " "),
-    preview: v.preview_url || ""
-  };
-}
-async function elLoadVoices(){
-  let list = [];
-  try {
-    let tok = "";
-    for (let n = 0; n < 5; n++){
-      const r = await (await elFetch("/v2/voices?page_size=100" + (tok ? "&next_page_token=" + encodeURIComponent(tok) : ""))).json();
-      list = list.concat(r.voices || []);
-      if (!r.has_more || !r.next_page_token) break;
-      tok = r.next_page_token;
-    }
-  } catch(e){
-    if (e.http !== 404) throw e;
-    list = (await (await elFetch("/v1/voices")).json()).voices || [];
-  }
-  EL.voices = list.map(elNorm).filter(v => v.id);
-  try { localStorage.setItem(EL_VOICES, JSON.stringify(EL.voices)); } catch(e){}
-  return EL.voices;
-}
-async function elCredits(){
-  try { const s = await (await elFetch("/v1/user/subscription")).json(); return s && s.character_limit ? {left: Math.max(0, s.character_limit - (s.character_count || 0)), limit: s.character_limit} : null; }
-  catch(e){ return null; }
-}
-const ACC_NAME = a => a ? a.replace(/\b\w/g, ch => ch.toUpperCase()) : "Other";
-/* Accents to try first: South African, then British, on a South African device; British on other Commonwealth ones. */
-function elPrefAccents(){
-  const r = (langOf().split(/[-_]/)[1] || "").toUpperCase();
-  if (r === "ZA") return ["south african", "british", "american", "australian"];
-  if (["GB", "IE", "AU", "NZ", "IN"].includes(r)) return ["british", "south african", "american", "australian"];
-  return ["american", "british", "south african", "australian"];
-}
-/* Each character gets a distinct ElevenLabs voice: their own pick, else the right gender in the preferred accent. */
-function elCast(chars){
-  const cast = {}, used = new Set();
-  S.elPick = S.elPick || {};
-  chars.forEach(c => { const id = S.elPick[c]; if (id && EL.voices.some(v => v.id === id)){ cast[c] = id; used.add(id); } });
-  const pref = elPrefAccents(), rank = v => { const i = pref.indexOf(v.acc); return i < 0 ? pref.length : i; };
-  let alt = 0;
-  chars.filter(c => !cast[c]).forEach(c => {
-    const g = charGender(c) || (alt++ % 2 ? "m" : "f");
-    const pool = EL.voices.filter(v => !used.has(v.id)).sort((a, b) => ((a.g === g ? 0 : 1) - (b.g === g ? 0 : 1)) || (rank(a) - rank(b)));
-    const v = pool[0] || EL.voices[0];
-    if (v){ cast[c] = v.id; used.add(v.id); }
-  });
-  return cast;
-}
-/* The ElevenLabs voice for a character, or null to use the built-in voices. Your own lines never use credits. */
-function elVoiceFor(who){
-  if (!elOn() || !who || who === ME) return null;
-  if (EL.cast[who] && EL.voices.some(v => v.id === EL.cast[who])) return EL.cast[who];
-  return elCast([who])[who] || null;
-}
-/* A line as ElevenLabs chunks: (beat) and (pause) stay as silences, other parentheticals are dropped. */
-function elPlan(text){
-  const segs = [];
-  String(text || "").split(/(\([^)]*\)|\[[^\]]*\])/).forEach(part => {
-    if (!part.trim()) return;
-    if (/^[\(\[]/.test(part)){ if (/beat|pause|silence|moment|breath|sigh/i.test(part)) segs.push({pause: /long|silence/i.test(part) ? 1500 : 800}); return; }
-    const t = tidyWords(part);
-    if (/[a-z0-9]/i.test(t)) segs.push({text: t});
-  });
-  while (segs.length && segs[0].pause) segs.shift();
-  while (segs.length && segs[segs.length - 1].pause) segs.pop();
-  return segs;
-}
-/* Saved lines: each generated line is kept on this device, so hearing it again costs nothing. */
-let elDB = null;
-function elDb(){
-  if (elDB) return Promise.resolve(elDB);
-  return new Promise(res => {
-    try {
-      const r = indexedDB.open("tapemate-voices", 1);
-      r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains("lines")) r.result.createObjectStore("lines", {keyPath: "k"}); };
-      r.onsuccess = () => { elDB = r.result; res(elDB); };
-      r.onerror = () => res(null);
-    } catch(e){ res(null); }
-  });
-}
-function elStore(mode, fn){
-  return elDb().then(db => db && new Promise(res => {
-    try { const q = fn(db.transaction("lines", mode).objectStore("lines")); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }
-    catch(e){ res(null); }
-  }));
-}
-const elKeyOf = (vid, text) => `${vid}|${elModelId()}|${text}`;
-const elCacheGet = k => elStore("readonly", st => st.get(k)).then(r => r && r.buf ? new Blob([r.buf], {type: r.type || "audio/mpeg"}) : null);
-const elCacheHas = k => elStore("readonly", st => st.count(k)).then(n => n > 0);
-const elCachePut = async (k, blob, chars) => { try { const buf = await blob.arrayBuffer(); await elStore("readwrite", st => st.put({k, buf, type: blob.type || "audio/mpeg", chars, at: Date.now()})); } catch(e){} };
-const elCacheAll = () => elStore("readonly", st => st.getAll()).then(r => r || []);
-const elCacheClear = () => elStore("readwrite", st => st.clear());
-/* At most two requests at a time (the free plan's limit); the line about to be spoken goes first. */
-const elSlot = urgent => new Promise(r => { if (EL.active < 2){ EL.active++; r(); } else (urgent ? EL.queue.unshift(r) : EL.queue.push(r)); });
-const elFree = () => { const n = EL.queue.shift(); if (n) n(); else EL.active = Math.max(0, EL.active - 1); };
-function elAudio(vid, text, urgent){
-  const k = elKeyOf(vid, text);
-  if (EL.inflight.has(k)) return EL.inflight.get(k);
-  const p = (async () => {
-    const hit = await elCacheGet(k); if (hit) return hit;
-    if (EL.blocked) throw EL.blocked;
-    await elSlot(urgent);
-    try {
-      for (let tries = 0; ; tries++){
-        try {
-          const r = await elFetch(`/v1/text-to-speech/${encodeURIComponent(vid)}?output_format=mp3_44100_128`, {
-            method: "POST", headers: {"Content-Type": "application/json", "Accept": "audio/mpeg"},
-            body: JSON.stringify({text, model_id: elModelId()})
-          });
-          const blob = await r.blob();
-          if (!blob.size) throw elErr("empty");
-          await elCachePut(k, blob, text.length);
-          return blob;
-        } catch(e){
-          if ((e.http === 429 || /too_many|concurrent/i.test(e.code)) && tries < 2){ await sleep(1200 * (tries + 1)); continue; }
-          if (/quota|invalid_api_key|missing_permission|nokey/i.test(e.code + " " + e.msg)) EL.blocked = e;   // stop asking until the key changes
-          throw e;
-        }
-      }
-    } finally { elFree(); }
-  })();
-  EL.inflight.set(k, p);
-  p.then(() => EL.inflight.delete(k), () => EL.inflight.delete(k));
-  return p;
-}
-/* Make the next few reader lines ahead of time, so the reader comes in without a gap. */
-function elPrefetch(from, n = 2){
-  if (!elOn() || EL.blocked) return;
-  let got = 0;
-  for (let i = Math.max(0, from); i < LINES.length && got < n; i++){
-    const l = LINES[i]; if (l.who === ME) continue;
-    const vid = elVoiceFor(l.who); if (!vid) continue;
-    elPlan(l.text).forEach(s => { if (s.text) elAudio(vid, s.text).catch(() => {}); });
-    got++;
-  }
-}
-const EL_PLAYER = new Audio(), EL_PREVIEW = new Audio();
-const EL_SILENCE = (() => {           // a short silent clip, to unlock audio on iPhone inside the tap
-  try {
-    const n = 800, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => [...t].forEach((c, i) => b[o + i] = c.charCodeAt(0));
-    w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-    v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, "data"); v.setUint32(40, n, true); b.fill(128, 44);
-    return URL.createObjectURL(new Blob([b], {type: "audio/wav"}));
-  } catch(e){ return ""; }
-})();
-function elUnlock(){
-  if (!EL_SILENCE) return;
-  try {
-    const a = EL_PLAYER; a.muted = true; a.src = EL_SILENCE;
-    const p = a.play();
-    const done = () => { if (a.src === EL_SILENCE){ a.pause(); } a.muted = false; };
-    p && p.then ? p.then(done, done) : done();
-  } catch(e){}
-}
-function elPlay(blob){
-  return new Promise(resolve => {
-    const a = EL_PLAYER, url = URL.createObjectURL(blob);
-    let done = false;
-    const fin = ok => { if (done) return; done = true; clearTimeout(g); a.onended = a.onerror = null; if (EL.stop === stop) EL.stop = null; try { URL.revokeObjectURL(url); } catch(e){} resolve(ok); };
-    const stop = () => { try { a.pause(); } catch(e){} fin(true); };
-    EL.stop = stop;
-    a.onended = () => fin(true); a.onerror = () => fin(false);
-    a.muted = false; a.src = url;
-    const rt = Math.max(0.7, Math.min(1.4, +S.rate || 1));
-    try { a.preservesPitch = true; a.defaultPlaybackRate = rt; a.playbackRate = rt; } catch(e){}
-    const g = setTimeout(() => fin(true), 90000);
-    const p = a.play(); if (p && p.catch) p.catch(() => fin(false));
-  });
-}
-function elStop(){ if (EL.stop) EL.stop(); }
-function elPreview(url){ if (!url) return; try { EL_PREVIEW.pause(); EL_PREVIEW.src = url; EL_PREVIEW.play().catch(() => {}); } catch(e){} }
-/* One clear note when ElevenLabs can't read a line; the built-in voice carries on meanwhile. */
-function elWarn(e){
-  const msg = elExplain(e);
-  const st = document.getElementById("elStatus"); if (st) st.textContent = msg;
-  if (Date.now() - EL.warned > 20000){ EL.warned = Date.now(); toast(msg + " The built-in voice is reading for now.", 7000); }
-}
-
 const ua = navigator.userAgent;
 const isIOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const canSR = !!SR;
-const canTTS = "speechSynthesis" in window;
 const canCam = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 const canRec = typeof MediaRecorder !== "undefined";
 if (!S.cue) S.cue = (canSR && !isIOS) ? "words" : "pause";
@@ -1819,7 +1613,6 @@ function renderTabs(){
     b.onclick = () => showScene(n);
     box.appendChild(b);
   }
-  $("#goRehearse").textContent = `Rehearse Scene ${CUR}`;
 }
 function reparse(){
   if (!booted) return;
@@ -1867,8 +1660,7 @@ function reparse(){
     r.onclick = () => { startIdx = i; reparse(); };
     pv.appendChild(r);
   });
-  renderVoices(chars.filter(c => c!==ME));
-  $("#goRehearse").disabled = !(LINES.length && ME);
+  renderReaderLines();
   try { renderTabsDots(); renderShots(); } catch(e){ /* first run */ }
   try { renderRehearse(); } catch(e){ /* first run */ }
 }
@@ -2088,305 +1880,14 @@ $("#file").addEventListener("change", async e => {
 $("#loadSample").onclick = () => { scriptEl.value = SAMPLE; startIdx = 0; reparse(); };
 $("#clearScript").onclick = () => { scriptEl.value = ""; startIdx = 0; reparse(); scriptEl.focus(); };
 
-/* ---------- voices ---------- */
-// Free, built-in voices only. The most human ones are Edge's "Natural" voices, then Apple's
-// Premium/Enhanced voices, then Chrome's "Google" voices. Each character gets 5 female and
-// 5 male options; when a device has fewer real voices, the rest are made by changing pitch and pace.
-// In English there are two matched sets, British and American, with the same 5 + 5 slots, so a
-// character can switch accent and keep their slot ("Male 2" stays "Male 2").
-const ACCENTS = {gb: {label: "British", region: "GB"}, us: {label: "American", region: "US"}};
-let VOICES = [], SETS = {}, ACC_LIST = [];   // SETS[acc] = {f:[5 presets], m:[5 presets], real:{f, m}}
 function langOf(){ return S.lang || (navigator.language || "en-US"); }
-const NOVELTY = /\b(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Deranged|Hysterical)\b/i;
-const ELOQ = /^(Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
-const OLDMAC = /^(Fred|Junior|Ralph|Kathy|Princess|Vicki|Agnes|Bruce)$/i;   // 1990s-sounding voices
-const FEMALE_V = /\b(female|woman|aria|jenny|michelle|ana|sonia|libby|maisie|mia|natasha|clara|emma|ava|emily|jane|nancy|sara|amber|ashley|cora|elizabeth|monica|zira|hazel|susan|heera|catherine|linda|heather|samantha|karen|moira|tessa|fiona|victoria|kate|serena|allison|nicky|veena|leah|luna|molly|neerja|isabella|ellie|hollie|olivia|bella|salli|joanna|kendra|kimberly|ivy|raveena|amy|nicole|zoe|vicki|agnes|joelle|nora|lekha|martha|rosa|yan|ava|eva|abbi|sienna|imani|ezinne|asilia|rehema|jenny|aisha|matilda|annette|freya|grandma|flo|sandy|shelley)\b/i;
-const MALE_V = /\b(male|man|guy|davis|tony|jason|eric|andrew|brian|christopher|roger|steffan|ryan|thomas|william|liam|luke|mitchell|connor|prabhat|david|mark|george|james|richard|sean|daniel|alex|fred|oliver|arthur|gordon|lee|aaron|rishi|tom|evan|nathan|matthew|joey|justin|kevin|russell|geraint|ralph|junior|eddy|reed|rocko|grandpa|noah|elliot|alfie|ethan|ken|duncan|darren|neil|wayne|abeo|chilemba|elimu|sam|tim|ollie|ken)\b/i;
-const ACCENT = {US:"American", GB:"British", AU:"Australian", ZA:"South African", IE:"Irish", IN:"Indian", CA:"Canadian", NZ:"New Zealand", SG:"Singaporean", PH:"Filipino", NG:"Nigerian", KE:"Kenyan", HK:"Hong Kong", TZ:"Tanzanian", JM:"Jamaican"};
-function voiceGender(v){
-  const n = v.name.replace(/^Microsoft\s+/i, "").replace(/Multilingual/i, "");
-  if (/^Google US English$/i.test(v.name)) return "f";
-  if (/\bfemale\b/i.test(n)) return "f";
-  if (/\bmale\b/i.test(n)) return "m";
-  const first = n.split(/[\s(-]/)[0];
-  if (FEMALE_V.test(first)) return "f";
-  if (MALE_V.test(first)) return "m";
-  return null;
-}
-function voiceScore(v){
-  const n = v.name; let sc = 0;
-  if (/Natural/i.test(n)) sc += 100;
-  else if (/Premium/i.test(n)) sc += 80;
-  else if (/Enhanced|Siri/i.test(n)) sc += 70;
-  else if (/^Google/i.test(n)) sc += 60;
-  if (/\b(Samantha|Daniel|Karen|Moira|Tessa|Alex|Serena|Allison|Ava|Tom|Susan|Fiona)\b/i.test(n)) sc += 25;
-  if (!v.localService) sc += 10;
-  if (/Desktop|eSpeak|espeak/i.test(n)) sc -= 20;
-  if (ELOQ.test(n)) sc -= 40;
-  if (OLDMAC.test(n)) sc -= 60;
-  if (NOVELTY.test(n)) sc -= 300;
-  const want = langOf().toLowerCase(), vl = v.lang.toLowerCase().replace("_","-");
-  if (vl === want) sc += 15;
-  return sc;
-}
-const tierOf = v => voiceScore(v) >= 90 ? "natural" : voiceScore(v) >= 55 ? "good" : "basic";
-function accentOf(v){
-  const region = (v.lang.split(/[-_]/)[1] || "").toUpperCase();
-  return ACCENT[region] || v.lang;
-}
-function friendly(v){
-  if (/^Google/i.test(v.name)) return /UK/i.test(v.name) ? "Google UK" : /US/i.test(v.name) ? "Google US" : "Google";
-  const n = v.name.replace(/^Microsoft\s+/i, "").replace(/Multilingual/i, "").replace(/\s*\(.*$/, "").replace(/\s+-\s+.*$/, "").replace(/\s+Online$/i, "");
-  return n.split(" ")[0] || n;
-}
-const regionOf = v => (v.lang.split(/[-_]/)[1] || "").toUpperCase();
-const isEnglish = () => langOf().toLowerCase().startsWith("en");
-/* New characters start in the accent closest to this device's English; you can switch each one. */
-function defaultAccent(){
-  if (S.accAll && SETS[S.accAll]) return S.accAll;
-  const r = (langOf().split(/[-_]/)[1] || "").toUpperCase();
-  const pref = ["GB", "IE", "AU", "NZ", "ZA", "IN"].includes(r) ? "gb" : "us";
-  return SETS[pref] ? pref : ACC_LIST[0];
-}
-const VARIANTS = {
-  f: [{tag:"warmer", pitch:0.9, rate:0.97}, {tag:"brighter", pitch:1.14, rate:1.03}, {tag:"older", pitch:0.86, rate:0.9}, {tag:"younger", pitch:1.22, rate:1.06}],
-  m: [{tag:"deeper", pitch:0.8, rate:0.95}, {tag:"older", pitch:0.86, rate:0.9}, {tag:"younger", pitch:1.12, rate:1.05}, {tag:"lighter", pitch:1.05, rate:1.02}]
-};
-const presetId = p => `${p.voice ? p.voice.voiceURI : "default"}|${p.pitch}|${p.rate}`;
-/* 5 female and 5 male presets from one pool of voices (one accent). */
-function buildSet(vs, acc){
-  const by = {f: vs.filter(v => voiceGender(v) === "f"), m: vs.filter(v => voiceGender(v) === "m"), u: vs.filter(v => !voiceGender(v))};
-  const tagAcc = v => acc === "any" && v ? " · " + accentOf(v) : "";
-  const out = {f:[], m:[], real:{f:0, m:0}};
-  for (const g of ["f","m"]){
-    // Prefer pitch/pace variants of good voices over genuinely poor voices.
-    let real = by[g].filter(v => voiceScore(v) > -10).slice(0, 5);
-    // ...but a dated voice of the right gender still beats another gender's voice pitched up or down.
-    if (!real.length) real = by[g].filter(v => voiceScore(v) > -100).slice(0, 2);
-    out.real[g] = real.length;
-    real.forEach(v => out[g].push({g, voice:v, pitch:1, rate:1, name:`${friendly(v)}${tagAcc(v)}${tierOf(v)==="natural" ? " ★" : ""}`, tier:tierOf(v)}));
-    // Not enough real voices: borrow an unlabelled one, or shift another voice, then make variants.
-    let src = real.length ? real : by.u.length ? by.u.slice(0,2) : (by[g==="f"?"m":"f"].slice(0,1));
-    const shift = real.length ? 1 : (g === "f" ? 1.25 : 0.72);
-    if (!real.length && src.length) out[g].push({g, voice:src[0], pitch:shift, rate:1, name:`${friendly(src[0])}, ${g==="f"?"higher":"lower"}${tagAcc(src[0])}`, tier:tierOf(src[0])});
-    if (!src.length) src = [null];
-    let i = 0;
-    while (out[g].length < 5 && i < 20){
-      const v = src[i % src.length], va = VARIANTS[g][Math.floor(i / src.length) % VARIANTS[g].length];
-      const p = {g, voice:v, pitch:+(shift*va.pitch).toFixed(2), rate:va.rate, name:`${v ? friendly(v) : "Default voice"}, ${va.tag}${tagAcc(v)}`, tier: v ? tierOf(v) : "basic"};
-      if (!out[g].some(x => presetId(x) === presetId(p))) out[g].push(p);
-      i++;
-    }
-    out[g].forEach((p, n) => { p.acc = acc; p.slot = n; p.label = `${g === "f" ? "Female" : "Male"} ${n + 1} · ${p.name}`; });
-  }
-  return out;
-}
-function buildPresets(){
-  let vs = VOICES.filter(v => !NOVELTY.test(v.name));
-  vs.sort((a,b) => voiceScore(b) - voiceScore(a));
-  // One of each voice (Edge lists "Andrew" and "AndrewMultilingual", which sound the same).
-  const seen = new Set();
-  vs = vs.filter(v => { const k = `${friendly(v)}|${v.lang}|${voiceGender(v)}`; if (seen.has(k)) return false; seen.add(k); return true; });
-  SETS = {}; ACC_LIST = [];
-  if (isEnglish()){
-    for (const [acc, A] of Object.entries(ACCENTS)){
-      const list = vs.filter(v => /^en/i.test(v.lang) && regionOf(v) === A.region);
-      if (list.length){ SETS[acc] = buildSet(list, acc); ACC_LIST.push(acc); }
-    }
-  }
-  if (!ACC_LIST.length){
-    // Not English, or no British or American voices here: one set from this language's voices.
-    const base = langOf().split("-")[0].toLowerCase();
-    let list = vs.filter(v => v.lang.toLowerCase().replace("_","-").startsWith(base));
-    if (!list.length) list = vs;
-    SETS.any = buildSet(list, "any"); ACC_LIST = ["any"];
-  }
-}
-const allPresets = () => ACC_LIST.flatMap(a => SETS[a].f.concat(SETS[a].m));
-/* The preset for a pick {g, slot, acc}; if that accent isn't on this device, the same slot in one that is. */
-function presetOf(pk){
-  const set = SETS[pk.acc] || SETS[defaultAccent()] || SETS[ACC_LIST[0]]; if (!set) return null;
-  const arr = set[pk.g] && set[pk.g].length ? set[pk.g] : set.f.concat(set.m);
-  return arr[Math.max(0, Math.min(pk.slot || 0, arr.length - 1))] || null;
-}
-function loadVoices(){
-  if (!canTTS) return;
-  VOICES = speechSynthesis.getVoices();
-  const langs = [...new Set(VOICES.map(v=>v.lang))].sort();
-  const sel = $("#lang");
-  const want = langOf();
-  const list = langs.length ? langs : [want];
+/* Script language: only used to follow your words while you act. */
+(function(){
+  const want = langOf(), list = ["en-GB","en-US","en-ZA","en-AU","en-NZ","en-IE","en-IN","en-CA"];
   if (!list.includes(want)) list.unshift(want);
-  sel.innerHTML = list.map(l => `<option ${l===want?"selected":""}>${esc(l)}</option>`).join("");
-  buildPresets();
-  reparse();
-}
-
-/* Who is this character? Name and title cues first, then "he"/"she" in the action lines around them. */
-const F_WORDS = /^(MRS|MS|MISS|MADAM|MOTHER|MOM|MUM|MOMMY|MUMMY|MA|WOMAN|GIRL|QUEEN|LADY|SISTER|SIS|AUNT|AUNTIE|GRANDMA|GRANNY|NAN|WIFE|DAUGHTER|WAITRESS|ACTRESS|PRINCESS|DUCHESS|BRIDE|GIRLFRIEND|NUN|MAID|HOSTESS|STEWARDESS|MARY|JESS|JESSICA|SARAH|EMMA|ANNA|ANNE|ANN|KATE|KATIE|LISA|AMY|LAURA|RACHEL|REBECCA|ROSE|SOPHIE|SOPHIA|GRACE|OLIVIA|EMILY|HANNAH|LUCY|CHLOE|MIA|ZOE|ELLA|ELLIE|MAYA|JANE|JULIA|CLAIRE|KAREN|LINDA|SUSAN|HELEN|NANCY|MARGARET|RUTH|ALICE|CLARA|EVA|EVE|NINA|NORA|LEAH|LILY|MOLLY|RUBY|AMBER|MEGAN|NAOMI|ZARA|THANDI|LERATO|NALEDI|PRIYA|AISHA|FATIMA|MARIA|ISABEL|ISABELLA|ELIZABETH|BETH|AMELIA|AVA|ABIGAIL|MADISON|CHARLOTTE|HARPER|STELLA|VICTORIA|DIANA|MONICA|ERICA|ANGELA|DONNA|CAROL|SANDRA|TINA|HOLLY|JENNY|JENNIFER|NATALIE|NICOLE|SAMANTHA|VANESSA|TANYA)$/;
-const M_WORDS = /^(MR|SIR|FATHER|DAD|DADDY|PA|MAN|BOY|KING|LORD|BROTHER|BRO|UNCLE|GRANDPA|GRANDAD|HUSBAND|SON|WAITER|ACTOR|PRINCE|DUKE|GROOM|BOYFRIEND|PRIEST|MONK|BUTLER|JOHN|JAMES|DAVID|MICHAEL|ROBERT|WILLIAM|RICHARD|THOMAS|TOM|CHARLES|JOE|JOSEPH|DANIEL|DAN|MATTHEW|MATT|MARK|PAUL|STEVEN|STEVE|ANDREW|PETER|PETE|GEORGE|JACK|HARRY|BEN|LUKE|ADAM|NICK|CHRIS|SAM|RYAN|JAKE|JASON|KEVIN|BRIAN|GARY|FRANK|GREG|TONY|LEO|MAX|OSCAR|NOAH|LIAM|ETHAN|LOGAN|DYLAN|SIPHO|THABO|BONGANI|PIETER|JOHAN|GAVIN|GENZO|DEV|RAJ|ALI|OMAR|CARLOS|MIGUEL|JUAN|HENRY|ARTHUR|WALTER|VICTOR|HUGO|FELIX|SIMON|NEIL|IAN|CRAIG|KYLE|SCOTT|BRAD|TODD|MARCUS|DEREK|TREVOR|WAYNE)$/;
-function charGender(name){
-  const words = name.toUpperCase().replace(/[^A-Z ]/g, " ").split(/\s+/).filter(Boolean);
-  for (const w of words){ if (F_WORDS.test(w)) return "f"; if (M_WORDS.test(w)) return "m"; }
-  // pronouns in sentences of action lines that mention this character
-  const raw = Object.values(P.scripts || {}).join("\n");
-  const re = new RegExp("\\b" + name.split(" ")[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i");
-  let f = 0, m = 0;
-  raw.split(/(?<=[.!?])\s+|\n+/).forEach(sentence => {
-    if (!re.test(sentence) || sentence.trim().toUpperCase() === sentence.trim()) return;  // skip cue lines
-    f += (sentence.match(/\b(she|herself)\b/gi) || []).length;
-    m += (sentence.match(/\b(he|himself)\b/gi) || []).length;
-  });
-  return f > m ? "f" : m > f ? "m" : null;
-}
-/* Gives every character a distinct voice: their own pick if they made one, else the best free option of the right gender. */
-/* Gives every character a distinct voice: their own pick ({g, slot, acc}) if they made one, else the best free option of the right gender. */
-function castVoices(chars){
-  const cast = {}, used = new Set();
-  S.castPick = S.castPick || {}; S.voicePick = S.voicePick || {};
-  chars.forEach(c => {
-    // A pick from the version before accents: find the same voice in the new sets.
-    if (!S.castPick[c] && S.voicePick[c] && VOICES.length){
-      const old = allPresets().find(x => presetId(x) === S.voicePick[c]);
-      if (old) S.castPick[c] = {g: old.g, slot: old.slot, acc: old.acc};
-      delete S.voicePick[c];
-    }
-    const pk = S.castPick[c], p = pk && presetOf(pk);
-    if (p){ cast[c] = p; used.add(presetId(p)); }
-  });
-  let alt = 0;
-  chars.filter(c => !cast[c]).forEach(c => {
-    let g = charGender(c);
-    if (!g){ g = alt++ % 2 ? "m" : "f"; }
-    const set = SETS[defaultAccent()]; if (!set) return;
-    const pool = set[g].length ? set[g] : set.f.concat(set.m);
-    const usedVoices = new Set([...used].map(id => id.split("|")[0]));
-    const pick = pool.find(x => !used.has(presetId(x)) && !usedVoices.has(presetId(x).split("|")[0])) || pool.find(x => !used.has(presetId(x))) || pool[0];
-    if (pick){ cast[c] = pick; used.add(presetId(pick)); }
-  });
-  return cast;
-}
-let CAST = {};
-function voiceFor(who){ return CAST[who] || castVoices([who])[who] || null; }
-/* The accent a character is set to: their own pick wins, even when this browser has no voice for it. */
-function accWanted(c){
-  const pk = S.castPick && S.castPick[c];
-  if (pk && ACCENTS[pk.acc]) return pk.acc;
-  return CAST[c] && ACCENTS[CAST[c].acc] ? CAST[c].acc : defaultAccent();
-}
-const ADD_VOICE_HELP = {
-  gb: "To add one on Windows: Settings → Time & language → Speech → Add voices → English (United Kingdom), then restart Chrome. Or open TapeMate in Microsoft Edge, which has free British voices.",
-  us: "To add one on Windows: Settings → Time & language → Speech → Add voices → English (United States), then restart Chrome."
-};
-function renderVoices(others){
-  if (elOn()) return renderElVoices(others);
-  EL.cast = {};
-  const box = $("#voices"); box.innerHTML = "";
-  if (!canTTS){ box.innerHTML = `<p class="hint">This browser can't speak text, so the reader will be silent. Tap through lines instead.</p>`; $("#accAll").hidden = true; return; }
-  CAST = castVoices(others);
-  const accents = !SETS.any;     // English: every character can be British or American
-  $("#voicesHint").textContent = accents
-    ? "Each character gets 5 female and 5 male voices, in British or American English. Switching accent keeps the same slot, so Male 2 stays Male 2. Picking a voice or an accent plays a preview."
-    : "Each character gets 5 female and 5 male voices to choose from. Picking one plays a preview.";
-  const sample = c => { const l = LINES.find(l => l.who === c); return l ? l.text : "Ready when you are."; };
-  const pickNow = c => { const p = CAST[c]; return p ? {g: p.g, slot: p.slot, acc: p.acc} : null; };
-  others.forEach(c => {
-    const row = document.createElement("div"); row.className = "vrow";
-    const g = charGender(c), cur = CAST[c];
-    const twin = cur && others.find(d => d !== c && CAST[d] && presetId(CAST[d]) === presetId(cur));
-    row.innerHTML = `<span class="who">${esc(c)}${twin ? `<small class="dup">same voice as ${esc(cap(twin))}</small>` : `<small>${g === "f" ? "reads as female" : g === "m" ? "reads as male" : ""}</small>`}</span>`;
-    const sel = document.createElement("select"); sel.setAttribute("aria-label", `Voice for ${c}`);
-    const want = accents ? accWanted(c) : (cur ? cur.acc : defaultAccent());
-    const set = SETS[want] || SETS[cur ? cur.acc : defaultAccent()] || SETS[ACC_LIST[0]];
-    const opt = p => `<option value="${p.g}:${p.slot}" ${cur && cur.g === p.g && cur.slot === p.slot ? "selected" : ""}>${esc(p.label)}</option>`;
-    sel.innerHTML = set ? (set.f.length ? `<optgroup label="Female voices">${set.f.map(opt).join("")}</optgroup>` : "")
-                        + (set.m.length ? `<optgroup label="Male voices">${set.m.map(opt).join("")}</optgroup>` : "") : "";
-    if (!sel.innerHTML) sel.innerHTML = `<option>Default voice</option>`;
-    sel.onchange = () => {
-      const [pg, slot] = sel.value.split(":");
-      S.castPick[c] = {g: pg, slot: +slot, acc: want}; save();
-      renderVoices(others); speak(sample(c), c);
-    };
-    row.append(sel);
-    if (accents){
-      const seg = document.createElement("div"); seg.className = "seg acc"; seg.setAttribute("aria-label", `Accent for ${c}`);
-      for (const [acc, A] of Object.entries(ACCENTS)){
-        const b = document.createElement("button"); b.type = "button"; b.dataset.v = acc; b.textContent = A.label;
-        b.setAttribute("aria-pressed", String(want === acc));
-        if (!SETS[acc]) b.title = `This browser has no ${A.label} voices yet`;
-        b.onclick = () => {
-          // Same gender and slot, new accent. Works before voices load and when the accent is missing (a note says so).
-          const base = pickNow(c) || {g: g || "f", slot: 0};
-          S.castPick[c] = Object.assign(base, {acc}); save();
-          renderVoices(others); speak(sample(c), c);
-        };
-        seg.appendChild(b);
-      }
-      row.append(seg);
-    }
-    const test = document.createElement("button"); test.type = "button"; test.className = "btn"; test.textContent = "Hear";
-    test.onclick = () => speak(sample(c), c);
-    row.append(test);
-    if (VOICES.length){
-      const note = document.createElement("small"); note.className = "vnote";
-      const v = cur && cur.voice, failed = v && VOICE_FAILED[v.voiceURI];
-      let t = v ? `Speaks with ${esc(v.name)} (${esc(v.lang)}).` : "Speaks with this browser's default voice.";
-      if (accents && !SETS[want]) t += ` <b>This browser has no ${ACCENTS[want].label} voice, so this is the closest one it has.</b> ${esc(ADD_VOICE_HELP[want])}`;
-      else if (accents && v && regionOf(v) !== ACCENTS[want].region) t += ` <b>This isn't a ${ACCENTS[want].label} voice.</b>`;
-      if (failed) t += ` <b>${esc(failed)}</b>`;
-      note.innerHTML = t; row.append(note);
-    }
-    box.appendChild(row);
-  });
-  if (!others.length) box.innerHTML = `<p class="hint">Only one character in this scene, so there's nothing for the reader to say.</p>`;
-  // "Everyone British / American", for scenes with more than one other character.
-  const all = $("#accAll");
-  all.hidden = !accents || others.length < 2;
-  all.querySelectorAll("button").forEach(b => {
-    b.disabled = false;
-    b.setAttribute("aria-pressed", String(others.length > 0 && others.every(c => accWanted(c) === b.dataset.v)));
-    b.onclick = () => {
-      const acc = b.dataset.v; S.accAll = acc;
-      others.forEach(c => { S.castPick[c] = Object.assign(pickNow(c) || {g: charGender(c) || "f", slot: 0}, {acc}); });
-      save(); renderVoices(others);
-    };
-  });
-  // Point to better free voices when this browser only has basic ones, and say when an accent is missing or thin.
-  const best = Math.max(-1, ...VOICES.map(voiceScore));
-  const tip = $("#voiceTip");
-  const isMac = /Mac/.test(navigator.platform) && !isIOS, isWin = /Win/.test(navigator.platform);
-  const isEdge = /Edg\//.test(ua);
-  const tips = [];
-  if (best >= 90) {}
-  else if (isWin && !isEdge) tips.push("For the most human-sounding reader, open TapeMate in Microsoft Edge. Edge has free “Natural” voices, British and American, that sound much closer to a real person. They need an internet connection.");
-  else if (isMac || isIOS) tips.push("For more natural voices, download free Enhanced or Premium voices: System Settings → Accessibility → Spoken Content → System voice → Manage Voices (on iPhone: Settings → Accessibility → Spoken Content → Voices). Then reload TapeMate.");
-  else if (!VOICES.some(v => /^Google/i.test(v.name))) tips.push("This browser only has basic voices. Chrome's Google voices or Edge's Natural voices sound more human.");
-  if (accents && VOICES.length){
-    const missing = Object.keys(ACCENTS).filter(a => !SETS[a]).map(a => ACCENTS[a].label);
-    if (missing.length) tips.push(`This browser has no ${missing[0]} voices, so characters set to ${missing[0]} use the closest voice it has.`);
-    Object.keys(ACCENTS).filter(a => SETS[a]).forEach(a => {
-      ["f","m"].forEach(g2 => { if (!SETS[a].real[g2]) tips.push(`There are no ${ACCENTS[a].label} ${g2 === "f" ? "female" : "male"} voices here, so those are another ${ACCENTS[a].label} voice with its pitch changed.`); });
-    });
-  }
-  const t = tips.join(" ");
-  tip.textContent = t; tip.hidden = !t;
-  save();
-}
-let voiceSig = null;
-function voicesMaybeChanged(){
-  if (!canTTS) return;
-  const sig = speechSynthesis.getVoices().map(v => v.voiceURI + v.lang).join("|");
-  if (sig === voiceSig) return;          // Chrome fires voiceschanged more than once; only rebuild when the list changed
-  voiceSig = sig; loadVoices();
-}
-if (canTTS){
-  voicesMaybeChanged();
-  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", voicesMaybeChanged);
-  else speechSynthesis.onvoiceschanged = voicesMaybeChanged;
-  // Some Chrome builds never fire the event for the online Google voices: check again for a few seconds.
-  let polls = 0; const poll = setInterval(() => { voicesMaybeChanged(); if (++polls >= 20) clearInterval(poll); }, 500);
-}
-$("#lang").onchange = e => { S.lang = e.target.value; S.castPick = {}; S.voicePick = {}; save(); buildPresets(); reparse(); };
+  $("#lang").innerHTML = list.map(l => `<option ${l===want?"selected":""}>${esc(l)}</option>`).join("");
+})();
+$("#lang").onchange = e => { S.lang = e.target.value; save(); };
 
 /* ---------- segmented controls ---------- */
 function seg(id, key, after){
@@ -2432,174 +1933,10 @@ seg("#readerWho","reader", v => {
   const room = v === "room";
   $("#roomBox").hidden = !room; $("#appVoicesHead").hidden = !room;
   $("#readerWhoHint").textContent = room
-    ? "Someone reads the other characters from behind the camera. The app stays silent and puts none of their lines on screen. Ask your reader to stand close to the camera and read a little softer than you."
-    : "The app reads the other characters with the voices below.";
+    ? "Someone reads the other characters from behind the camera. TapeMate stays silent and puts none of their lines on screen. Ask your reader to stand close to the camera and read a little softer than you."
+    : "You record the other characters' lines once, below. TapeMate plays them back as your reader when you rehearse and when you tape.";
 });
 seg("#roomLines","roomLines", roomLinesHint);
-/* ---------- ElevenLabs settings ---------- */
-/* The voice rows when ElevenLabs is on: one list of your account's voices, grouped by accent. */
-function renderElVoices(others){
-  const box = $("#voices"); box.innerHTML = "";
-  $("#accAll").hidden = true; $("#voiceTip").hidden = true;
-  EL.cast = elCast(others);
-  $("#voicesHint").textContent = "Voices from your ElevenLabs account. Choosing one plays its free sample. Hear reads the character's first line, which uses a few credits once and is then saved on this device.";
-  const pref = elPrefAccents();
-  const accs = [...new Set(EL.voices.map(v => v.acc))].sort((a, b) => {
-    const ia = pref.indexOf(a), ib = pref.indexOf(b);
-    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || (!a) - (!b) || a.localeCompare(b);
-  });
-  const sample = c => { const l = LINES.find(l => l.who === c); return l ? l.text : "Ready when you are."; };
-  const vOf = id => EL.voices.find(v => v.id === id);
-  others.forEach(c => {
-    const row = document.createElement("div"); row.className = "vrow";
-    const g = charGender(c), cur = vOf(EL.cast[c]);
-    const twin = cur && others.find(d => d !== c && EL.cast[d] === cur.id);
-    row.innerHTML = `<span class="who">${esc(c)}${twin ? `<small class="dup">same voice as ${esc(ACC_NAME(twin.toLowerCase()))}</small>` : `<small>${g === "f" ? "reads as female" : g === "m" ? "reads as male" : ""}</small>`}</span>`;
-    const sel = document.createElement("select"); sel.setAttribute("aria-label", `ElevenLabs voice for ${c}`);
-    sel.innerHTML = accs.map(a => `<optgroup label="${esc(ACC_NAME(a))}">` + EL.voices.filter(v => v.acc === a).map(v =>
-      `<option value="${esc(v.id)}" ${cur && cur.id === v.id ? "selected" : ""}>${esc(v.name)}${v.g ? (v.g === "f" ? " · female" : " · male") : ""}${v.age ? " · " + esc(v.age) : ""}</option>`).join("") + `</optgroup>`).join("");
-    sel.onchange = () => { S.elPick[c] = sel.value; save(); const v = vOf(sel.value); if (v) elPreview(v.preview); renderElVoices(others); };
-    row.append(sel);
-    const test = document.createElement("button"); test.type = "button"; test.className = "btn"; test.textContent = "Hear";
-    test.onclick = () => speak(sample(c), c);
-    row.append(test);
-    if (cur){
-      const note = document.createElement("small"); note.className = "vnote";
-      note.textContent = `${cur.name}: ${ACC_NAME(cur.acc)}${cur.desc ? ", " + cur.desc : ""}.`;
-      row.append(note);
-    }
-    box.appendChild(row);
-  });
-  if (!others.length) box.innerHTML = `<p class="hint">Only one character in this scene, so there's nothing for the reader to say.</p>`;
-  save();
-  elPrepLabel();
-}
-/* Lines the reader will say in this scene, as [voice, text] pairs. */
-function elSceneJobs(){
-  const out = [], seen = new Set();
-  LINES.forEach((l, i) => {
-    if (l.who === ME) return;
-    const vid = elVoiceFor(l.who); if (!vid) return;
-    elPlan(l.text).forEach(s => { if (!s.text) return; const k = elKeyOf(vid, s.text); if (!seen.has(k)){ seen.add(k); out.push({vid, text: s.text, k, line: i}); } });
-  });
-  return out;
-}
-async function elPrepLabel(){
-  const b = $("#elPrep"); if (!b || EL.prepping) return;
-  if (!elOn()){ $("#elPrepOut").textContent = ""; return; }
-  const jobs = elSceneJobs(), todo = [];
-  for (const j of jobs) if (!(await elCacheHas(j.k))) todo.push(j);
-  const lines = new Set(todo.map(j => j.line)).size;
-  const credits = Math.ceil(todo.reduce((n, j) => n + j.text.length, 0) * elRate());
-  b.disabled = !todo.length;
-  b.textContent = todo.length ? `Get Scene ${CUR} ready` : `Scene ${CUR} is ready`;
-  $("#elPrepOut").textContent = !jobs.length ? ""
-    : todo.length ? `${lines} reader line${lines > 1 ? "s" : ""} to make, about ${credits.toLocaleString()} credits. After that, this scene costs nothing to rehearse.`
-    : "Every reader line in this scene is saved on this device, so rehearsing it uses no credits.";
-  elCacheLabel();
-}
-async function elCacheLabel(){
-  const all = await elCacheAll();
-  const bytes = all.reduce((n, r) => n + ((r.buf && r.buf.byteLength) || 0), 0);
-  $("#elCacheOut").textContent = all.length ? `${all.length} saved line${all.length > 1 ? "s" : ""}, ${Math.max(0.1, bytes / 1e6).toFixed(1)} MB` : "";
-  $("#elClear").hidden = !all.length;
-}
-function elRenderStatus(msg){
-  const k = elKey();
-  $("#elKey").placeholder = k ? `Key saved · ends in ${k.slice(-4)}` : "Paste your ElevenLabs API key";
-  $("#elForget").hidden = !k;
-  $("#elSave").textContent = k ? "Replace key" : "Save key";
-  $("#elHow").open = !k;
-  $("#elStatus").textContent = msg || (!k ? "No key yet, so the built-in voices read for now."
-    : EL.voices.length ? `Connected. ${EL.voices.length} voices in your ElevenLabs account.` : "Key saved. Loading your voices…");
-  $("#elTools").hidden = !elOn();
-}
-async function elConnect(quiet){
-  if (!elKey()) return elRenderStatus();
-  if (!quiet) $("#elStatus").textContent = "Checking your key…";
-  try {
-    await elLoadVoices();
-    const c = await elCredits();
-    elRenderStatus(!EL.voices.length ? "Connected, but there are no voices in this ElevenLabs account yet."
-      : `Connected. ${EL.voices.length} voices` + (c ? `, and ${c.left.toLocaleString()} of ${c.limit.toLocaleString()} credits left this month.` : "."));
-  } catch(e){ elRenderStatus(elExplain(e)); }
-  try { reparse(); } catch(e){}
-}
-let elReady = false;
-seg("#engine", "engine", v => {
-  $("#elBox").hidden = v !== "eleven";
-  elRenderStatus();
-  if (elReady){ try { reparse(); } catch(e){} if (v === "eleven" && elKey()) elConnect(true); }
-});
-seg("#elModel", "elModel", () => { if (elReady) elPrepLabel(); });
-elReady = true;
-$("#elSave").onclick = () => {
-  const v = $("#elKey").value.trim();
-  if (!v){ if (elKey()) elConnect(); else { $("#elStatus").textContent = "Paste your key first."; $("#elKey").focus(); } return; }
-  if (/\s/.test(v) || v.length < 20){ $("#elStatus").textContent = "That doesn't look like an ElevenLabs key. It's one long piece of text, usually starting with sk_."; return; }
-  try { localStorage.setItem(EL_KEY, v); localStorage.removeItem(EL_VOICES); } catch(e){}
-  $("#elKey").value = ""; EL.blocked = null; EL.voices = [];
-  elConnect();
-};
-$("#elKey").onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); $("#elSave").click(); } };
-$("#elForget").onclick = () => {
-  try { localStorage.removeItem(EL_KEY); localStorage.removeItem(EL_VOICES); } catch(e){}
-  EL.voices = []; EL.cast = {}; EL.blocked = null; S.elPick = {}; save();
-  elRenderStatus("Key removed from this device. The built-in voices read now.");
-  try { reparse(); } catch(e){}
-};
-$("#elPrep").onclick = async () => {
-  if (EL.prepping || !elOn()) return;
-  const jobs = elSceneJobs(), todo = [];
-  for (const j of jobs) if (!(await elCacheHas(j.k))) todo.push(j);
-  if (!todo.length) return elPrepLabel();
-  EL.prepping = true; $("#elPrep").disabled = true;
-  let done = 0, err = null;
-  const out = $("#elPrepOut");
-  const step = async () => { while (todo.length && !err){ const j = todo.shift(); try { await elAudio(j.vid, j.text); done++; out.textContent = `Making the reader's lines… ${done} of ${done + todo.length}`; } catch(e){ err = e; } } };
-  out.textContent = "Making the reader's lines…";
-  await Promise.all([step(), step()]);
-  EL.prepping = false;
-  if (err){ $("#elPrep").disabled = false; out.textContent = elExplain(err); }
-  else elPrepLabel();
-};
-$("#elClear").onclick = async () => { await elCacheClear(); elPrepLabel(); toast("Saved ElevenLabs lines cleared from this device."); };
-$("#elSearch").onclick = async () => {
-  const out = $("#elResults"), acc = $("#elAccent").value, g = $("#elGender").value;
-  out.innerHTML = `<p class="hint">Searching…</p>`;
-  try {
-    const q = new URLSearchParams({page_size: "20", language: "en", accent: acc}); if (g) q.set("gender", g);
-    let list = (await (await elFetch("/v1/shared-voices?" + q)).json()).voices || [];
-    if (!list.length){                       // some libraries tag accents differently: search by name too
-      const q2 = new URLSearchParams({page_size: "20", search: ACC_NAME(acc)}); if (g) q2.set("gender", g);
-      list = (await (await elFetch("/v1/shared-voices?" + q2)).json()).voices || [];
-    }
-    if (!list.length){ out.innerHTML = `<p class="hint">No ${esc(ACC_NAME(acc))} voices found. Try the Voice Library on the ElevenLabs website.</p>`; return; }
-    out.innerHTML = "";
-    list.forEach(v => {
-      const n = elNorm(v), have = EL.voices.some(x => x.id === n.id);
-      const row = document.createElement("div"); row.className = "elres";
-      row.innerHTML = `<div><b>${esc(n.name)}</b><small>${esc([ACC_NAME(n.acc), n.g === "f" ? "female" : n.g === "m" ? "male" : "", n.age, n.desc].filter(Boolean).join(" · "))}</small></div>`;
-      const hear = document.createElement("button"); hear.type = "button"; hear.className = "btn"; hear.textContent = "Hear";
-      hear.onclick = () => elPreview(n.preview); hear.disabled = !n.preview;
-      const add = document.createElement("button"); add.type = "button"; add.className = "btn primary"; add.textContent = have ? "Added" : "Add"; add.disabled = have;
-      add.onclick = async () => {
-        add.disabled = true; add.textContent = "Adding…";
-        try {
-          await elFetch(`/v1/voices/add/${encodeURIComponent(v.public_owner_id)}/${encodeURIComponent(v.voice_id)}`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({new_name: n.name})});
-          await elLoadVoices(); add.textContent = "Added";
-          toast(`${n.name} is in your voices now. Pick it for a character below.`);
-          try { reparse(); } catch(e){}
-        } catch(e){
-          add.disabled = false; add.textContent = "Add";
-          toast(/permission/i.test(e.code + e.msg) ? "Your key can't add voices. Add it in the Voice Library on elevenlabs.io instead, or give the key Voices: Write." : elExplain(e), 8000);
-        }
-      };
-      row.append(hear, add); out.appendChild(row);
-    });
-  } catch(e){ out.innerHTML = `<p class="hint">${esc(elExplain(e))}</p>`; }
-};
-if (S.engine === "eleven" && elKey()) setTimeout(() => elConnect(true), 1200);   // refresh the voice list and credits quietly
 seg("#prompt","prompt");
 seg("#tail","tail");
 seg("#quality","quality", () => { try { renderQuality(); } catch(e){ /* before the shot list exists */ } });
@@ -2627,7 +1964,6 @@ showVals();
   const rows = [
     [canCam, "Camera and microphone", "Not available. Open this page over https (or as a local file in Chrome)."],
     [canRec, "Recording video", "This browser can't record video (MediaRecorder missing)."],
-    [canTTS, "Reader voice (text to speech)", "No speech voices; the reader will be silent."],
     [canSR ? (isIOS ? "warn" : true) : "warn", canSR ? (isIOS ? "Speech recognition (unreliable on iPhone/iPad while recording, so pause mode is the default)" : "Speech recognition, for following your words") : "Speech recognition isn't in this browser. Pause mode and tap mode still work.", ""],
   ];
   if (!window.isSecureContext) rows.push(["bad","This page isn't on https, so the camera will be blocked. Host it on an https address.",""]);
@@ -2641,129 +1977,222 @@ showVals();
 let tToast;
 function toast(msg, ms=4200){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(tToast); tToast=setTimeout(()=>t.hidden=true, ms); }
 
-/* ---------- TTS ---------- */
-// Turns a line into speech with small human pauses: (beat) and (pause) become silences,
-// "..." and dashes become short hesitations, and each sentence is its own utterance.
-const ACRONYMS = /^(OK|TV|FBI|CIA|USA|UK|DNA|ID|CEO|NYPD|LAPD|ER|ICU|DJ|AM|PM|II|III|IV)$/;
-function tidyWords(t){
-  return t.replace(/[*_~]/g, "")
-          .replace(/\b([A-Z][A-Z']{1,})\b/g, w => ACRONYMS.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase())
-          .replace(/\s+/g, " ").trim();
+/* ---------- the reader: your own recorded voice ---------- */
+// The actor records each of the other characters' lines once. Every recording has the silence
+// at both ends trimmed off, is saved in this browser (IndexedDB "tapemate-reader"), and is played
+// back as the reader in rehearsals and takes. A line is matched by character and words, so the
+// same line in another scene, or in sides pasted again, reuses its recording.
+const RV = {db: null, have: new Set(), rec: null, chain: false, stop: null, player: new Audio()};
+const rvKey = (who, text) => who + "|" + spokenText(text).toLowerCase().replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
+function rvDb(){
+  if (!RV.db) RV.db = new Promise((res, rej) => {
+    const r = indexedDB.open("tapemate-reader", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("lines");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  return RV.db;
 }
-function speechPlan(text){
-  const segs = [];
-  text.split(/(\([^)]*\)|\[[^\]]*\])/).forEach(part => {
-    if (!part.trim()) return;
-    if (/^[\(\[]/.test(part)){
-      if (/beat|pause|silence|moment|breath|sigh|beat/i.test(part)) segs.push({pause: /long|silence/i.test(part) ? 1500 : 800});
+async function rvTx(mode, fn){
+  const db = await rvDb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction("lines", mode); let out;
+    const r = fn(tx.objectStore("lines")); if (r) r.onsuccess = () => { out = r.result; };
+    tx.oncomplete = () => res(out); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error);
+  });
+}
+async function rvLoad(){
+  try { (await rvTx("readonly", st => st.getAllKeys()) || []).forEach(k => RV.have.add(k)); } catch(e){}
+  renderReaderLines();
+}
+/* 16-bit mono WAV: plays everywhere, seeks cleanly, and keeps the trim exact. */
+function wavBlob(pcm, rate){
+  const b = new ArrayBuffer(44 + pcm.length * 2), v = new DataView(b);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + pcm.length * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true);
+  v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, pcm.length * 2, true);
+  new Int16Array(b, 44).set(pcm);
+  return new Blob([b], {type: "audio/wav"});
+}
+/* Cut the silence before and after the line, so the reader comes in like a person would. */
+async function rvTrim(blob){
+  const AC = window.AudioContext || window.webkitAudioContext, ctx = new AC();
+  try {
+    const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+    const sr = buf.sampleRate, n0 = buf.length;
+    let d = buf.getChannelData(0);
+    if (buf.numberOfChannels > 1){ const d2 = buf.getChannelData(1), m = new Float32Array(n0); for (let i = 0; i < n0; i++) m[i] = (d[i] + d2[i]) / 2; d = m; }
+    const win = Math.max(1, Math.round(sr * 0.02)), rms = [];
+    let loud = 0, peak = 0;
+    for (let s = 0; s < n0; s += win){
+      const e = Math.min(n0, s + win); let a = 0;
+      for (let k = s; k < e; k++){ a += d[k] * d[k]; const x = Math.abs(d[k]); if (x > peak) peak = x; }
+      const r = Math.sqrt(a / (e - s)); rms.push(r); if (r > loud) loud = r;
+    }
+    if (loud < 0.008) return null;                       // nothing but room noise
+    const th = Math.max(0.005, loud * 0.1);
+    const a = rms.findIndex(r => r > th); let z = rms.length - 1; while (z > a && rms[z] <= th) z--;
+    const start = Math.max(0, a * win - Math.round(sr * 0.06));
+    const end = Math.min(n0, (z + 1) * win + Math.round(sr * 0.2));
+    const f = sr >= 44100 ? 2 : 1, n = Math.floor((end - start) / f), out = new Int16Array(n);
+    const g = Math.min(4, 0.89 / Math.max(peak, 1e-4)), fade = Math.round(sr / f * 0.01);
+    for (let k = 0; k < n; k++){
+      let x = 0; for (let j = 0; j < f; j++) x += d[start + k * f + j] || 0;
+      x = x / f * g * Math.min(1, k / fade, (n - 1 - k) / fade);
+      out[k] = Math.max(-1, Math.min(1, x)) * 32767;
+    }
+    return {blob: wavBlob(out, Math.round(sr / f)), dur: n / (sr / f)};
+  } finally { try { ctx.close(); } catch(e){} }
+}
+const rvOthers = () => LINES.map((l, i) => ({l, i})).filter(x => x.l.who !== ME);
+const rvHas = l => RV.have.has(rvKey(l.who, l.text));
+function rvNextMissing(after = -1){
+  const o = rvOthers(); const x = o.find(x => x.i > after && !rvHas(x.l)) || o.find(x => !rvHas(x.l));
+  return x ? x.i : -1;
+}
+function rvMissing(){ return rvOthers().filter(x => !rvHas(x.l)).length; }
+async function rvStream(){
+  if (RV.stream && RV.stream.getAudioTracks().some(t => t.readyState === "live")) return RV.stream;
+  RV.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+  return RV.stream;
+}
+function rvCloseStream(){ if (RV.stream){ RV.stream.getTracks().forEach(t => t.stop()); RV.stream = null; } }
+async function rvRecord(i){
+  if (RV.rec) return;
+  const l = LINES[i]; if (!l) return;
+  stopSpeaking();
+  let stream;
+  try { stream = await rvStream(); }
+  catch(e){ RV.chain = false; renderReaderLines(); toast("TapeMate needs your microphone to record the reader's lines. Allow the microphone and try again.", 7000); return; }
+  let mr;
+  try { mr = new MediaRecorder(stream); } catch(e){ RV.chain = false; toast("This browser can't record audio.", 6000); return; }
+  const parts = [], key = rvKey(l.who, l.text);
+  mr.ondataavailable = e => { if (e.data && e.data.size) parts.push(e.data); };
+  RV.rec = {i, key, mr, t0: performance.now()};
+  RV.rec.tick = setInterval(() => { const t = $("#rvTime"); if (t && RV.rec) t.textContent = ((performance.now() - RV.rec.t0) / 1000).toFixed(1) + " s"; }, 100);
+  mr.onstop = async () => {
+    const r = RV.rec; clearInterval(r.tick);
+    let got = null;
+    try { got = await rvTrim(new Blob(parts, {type: mr.mimeType || "audio/webm"})); } catch(e){}
+    RV.rec = null;
+    if (r.cancel){ renderReaderLines(); return; }
+    if (!got){
+      RV.chain = false; rvCloseStream(); renderReaderLines();
+      toast("TapeMate couldn't hear that line. Check your microphone and try again, a little closer to it.", 7000);
       return;
     }
-    part.split(/(\.\.\.+|…|\s+-{1,2}\s+|—|–|--)/).forEach(bit => {
-      if (!bit.trim()) return;
-      if (/^(\.\.\.+|…|\s+-{1,2}\s+|—|–|--)$/.test(bit)){ segs.push({pause: 380}); return; }
-      (bit.match(/[^.!?]+[.!?]*["'’”)\]]*\s*/g) || [bit]).forEach(sn => {
-        const tt = tidyWords(sn);
-        if (/[a-z0-9]/i.test(tt)) segs.push({text: tt});
-      });
-    });
-  });
-  while (segs.length && segs[0].pause) segs.shift();
-  while (segs.length && segs[segs.length-1].pause) segs.pop();
-  return segs;
+    try { await rvTx("readwrite", st => st.put({blob: got.blob, dur: got.dur, who: l.who, text: l.text, at: Date.now()}, key)); RV.have.add(key); }
+    catch(e){ RV.chain = false; toast("Couldn't save that recording in this browser. Is the disk full?", 7000); }
+    const nx = RV.chain ? rvNextMissing(r.i) : -1;
+    if (nx < 0){
+      if (RV.chain) toast("Every reader line in this scene is recorded.", 5000);
+      RV.chain = false; rvCloseStream(); renderReaderLines(); return;
+    }
+    renderReaderLines();
+    setTimeout(() => { if (RV.chain) rvRecord(nx); }, 450);
+  };
+  mr.start();
+  renderReaderLines();
 }
-let speakingDone = null, speakToken = 0;
-const VOICE_FAILED = {};   // voiceURI -> note, for online voices that wouldn't speak
-/* The current object for a voice (Chrome hands out new ones each time the list reloads). */
-function liveVoice(v){
-  if (!v) return null;
-  return speechSynthesis.getVoices().find(x => x.voiceURI === v.voiceURI) || v;
+function rvStop(cancel){ if (!RV.rec) return; RV.rec.cancel = !!cancel; try { RV.rec.mr.stop(); } catch(e){} }
+async function rvDelete(l){
+  const key = rvKey(l.who, l.text);
+  try { await rvTx("readwrite", st => st.delete(key)); } catch(e){}
+  RV.have.delete(key); renderReaderLines();
 }
-/* An offline voice in the same accent (and gender if possible), for when an online voice fails. */
-function offlineTwin(v, g){
-  const all = speechSynthesis.getVoices().filter(x => x.localService && x.voiceURI !== v.voiceURI && !NOVELTY.test(x.name));
-  const same = all.filter(x => x.lang.replace("_","-").toLowerCase() === v.lang.replace("_","-").toLowerCase());
-  return same.find(x => voiceGender(x) === g) || same[0] || null;
-}
-function speakOne(text, preset){
-  let p = preset;
-  if (p && p.voice && VOICE_FAILED[p.voice.voiceURI]){
-    const alt = offlineTwin(p.voice, p.g);
-    if (alt) p = Object.assign({}, p, {voice: alt});
+function renderReaderLines(){
+  const box = $("#rvLines"); if (!box) return;
+  const tabs = $("#rvScenes");
+  tabs.innerHTML = ""; tabs.hidden = P.scenes < 2;
+  for (let n = 1; n <= P.scenes; n++){
+    const b = document.createElement("button"); b.type = "button"; b.dataset.v = n; b.textContent = `Scene ${n}`;
+    b.setAttribute("aria-pressed", String(n === CUR)); b.disabled = !!RV.rec;
+    b.onclick = () => showScene(n); tabs.appendChild(b);
   }
-  return speakRaw(text, p).then(err => {
-    // Chrome's Google voices are online: if one fails, say it again with an offline voice of the same accent.
-    if (!err || !p || !p.voice || p.voice.localService || /interrupted|canceled/.test(err)) return;
-    const alt = offlineTwin(p.voice, p.g);
-    VOICE_FAILED[p.voice.voiceURI] = alt
-      ? `${p.voice.name} didn't load (it needs internet), so ${alt.name} is reading instead.`
-      : `${p.voice.name} didn't load (it needs internet), and there's no offline voice with this accent.`;
-    try { renderVoices(Object.keys(CAST)); } catch(e){}
-    if (alt) return speakRaw(text, Object.assign({}, p, {voice: alt}));
+  const all = $("#rvAll");
+  if (!LINES.length || !ME){
+    box.innerHTML = `<p class="hint">Add the sides for Scene ${CUR} on the Sides page and pick your character. The other characters' lines then show up here for you to record.</p>`;
+    $("#rvCount").textContent = ""; all.hidden = true; return;
+  }
+  const o = rvOthers(), done = o.filter(x => rvHas(x.l)).length;
+  $("#rvCount").textContent = o.length ? `${done} of ${o.length} reader line${o.length > 1 ? "s" : ""} recorded in Scene ${CUR}` : "";
+  all.hidden = !RV.chain && done === o.length;
+  all.textContent = RV.chain ? "Stop after this line" : done ? "Record the lines still missing" : "Record all the reader's lines";
+  all.className = RV.chain ? "btn" : "btn primary";
+  box.innerHTML = "";
+  LINES.forEach((l, i) => {
+    const mine = l.who === ME, row = document.createElement("div");
+    const has = !mine && rvHas(l), now = RV.rec && RV.rec.i === i;
+    row.className = "rvrow" + (mine ? " mine" : "") + (has ? " ok" : "") + (now ? " live" : "");
+    row.innerHTML = `<span class="who">${esc(l.who)}${mine ? "<small>You</small>" : ""}</span><span class="txt">${fmtLine(l.text)}</span><span class="acts"></span>`;
+    const acts = row.querySelector(".acts");
+    const mk = (label, cls, fn, title) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + cls; b.textContent = label; if (title) b.title = title; b.onclick = fn; b.disabled = !!RV.rec && !now; acts.appendChild(b); return b; };
+    if (now){
+      mk("■ Stop", "rec", () => rvStop(), "Stop recording (space bar)");
+      const t = document.createElement("span"); t.className = "rvtime"; t.id = "rvTime"; t.textContent = "0.0 s"; acts.appendChild(t);
+    } else if (!mine && has){
+      mk("▶ Play", "", () => speak(l.text, l.who));
+      mk("● Redo", "", () => { RV.chain = false; rvRecord(i); });
+      mk("×", "rvdel", () => rvDelete(l), "Delete this recording");
+    } else if (!mine){
+      mk("● Record", "recline", () => { RV.chain = false; rvRecord(i); });
+    }
+    box.appendChild(row);
+    if (now) requestAnimationFrame(() => row.scrollIntoView({block: "nearest", behavior: "smooth"}));
   });
 }
-function speakRaw(text, preset){
-  return new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(text);
-    const v = preset && liveVoice(preset.voice);
-    try { if (v){ u.voice = v; u.lang = v.lang; } else u.lang = langOf(); } catch(e){ u.lang = langOf(); }
-    // Basic offline voices sound better a touch slower; natural voices at their own pace.
-    const base = preset && preset.tier === "basic" ? 0.95 : 1;
-    u.rate = Math.max(0.5, Math.min(2, S.rate * base * (preset ? preset.rate : 1)));
-    u.pitch = Math.max(0.1, Math.min(2, preset ? preset.pitch : 1));
-    let done = false; const fin = err => { if (!done){ done = true; clearTimeout(g); resolve(err || null); } };
-    u.onend = () => fin(); u.onerror = e => fin((e && e.error) || "error");
-    const words = text.split(/\s+/).length;
-    const g = setTimeout(fin, (words / (2.3 * u.rate)) * 1000 * 2 + 3000);
-    speechSynthesis.speak(u);
-  });
+$("#rvAll").onclick = () => {
+  if (RV.chain){ RV.chain = false; renderReaderLines(); return; }
+  const i = rvNextMissing(); if (i < 0) return;
+  RV.chain = true; rvRecord(i);
+};
+document.addEventListener("keydown", e => {
+  if (!RV.rec || !$("#stage").hidden || /INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || "")) return;
+  if (e.code === "Space" || e.code === "Enter"){ e.preventDefault(); rvStop(); }
+  else if (e.code === "Escape"){ e.preventDefault(); RV.chain = false; rvStop(true); }
+});
+
+/* ---------- the reader speaks: plays your recording of the line ---------- */
+let speakingDone = null, speakToken = 0;
+RV.player.preservesPitch = true; RV.player.mozPreservesPitch = true; RV.player.webkitPreservesPitch = true;
+const RV_SILENCE = URL.createObjectURL(wavBlob(new Int16Array(2400), 24000));
+/* iPhone only lets a page play sound it started inside a tap: prime the player then. */
+function rvUnlock(){
+  try { const a = RV.player; a.muted = true; a.src = RV_SILENCE; const p = a.play(); const back = () => { a.muted = false; }; p && p.then ? p.then(back, back) : back(); } catch(e){}
 }
 function speak(text, who){
   return new Promise(async resolve => {
-    const vid = text ? elVoiceFor(who) : null;
-    if ((!canTTS && !vid) || !text){ setTimeout(resolve, 600); return; }
-    const busy = canTTS && (speechSynthesis.speaking || speechSynthesis.pending);
-    if (canTTS) speechSynthesis.cancel();
-    elStop();
+    if (RV.stop){ const s = RV.stop; RV.stop = null; s(); }
     const my = ++speakToken;
-    if (busy) await new Promise(r => setTimeout(r, 80));   // Chrome can drop or misvoice a line spoken straight after cancel()
-    if (my !== speakToken){ resolve(); return; }
     let done = false;
     const finish = () => { if (done) return; done = true; if (speakingDone === finish) speakingDone = null; resolve(); };
     speakingDone = finish;
-    try {
-      if (vid){
-        // ElevenLabs reads it; anything it can't (no credits, no internet) falls back to the built-in voice.
-        let rest = null;
-        const plan = elPlan(text);
-        for (let i = 0; i < plan.length; i++){
-          if (my !== speakToken || done) break;
-          const sg = plan[i];
-          if (sg.pause){ await sleep(sg.pause); continue; }
-          let ok = false;
-          try {
-            const blob = await elAudio(vid, sg.text, true);
-            if (my !== speakToken || done) break;
-            ok = await elPlay(blob);
-            if (!ok) elWarn(elErr("play"));
-          } catch(e){ elWarn(e); }
-          if (!ok){ rest = plan.slice(i).map(x => x.text || "").filter(Boolean).join(" "); break; }
-        }
-        if (rest === null || !rest || !canTTS || my !== speakToken || done){ finish(); return; }
-        text = rest;
-      }
-    } catch(e){ /* fall through to the built-in voice */ }
-    const preset = voiceFor(who);
-    try {
-      for (const seg of speechPlan(text)){
-        if (my !== speakToken || done) break;
-        if (seg.pause) await sleep(seg.pause);
-        else await speakOne(seg.text, preset);
-      }
-    } catch(e){ /* never leave the scene hanging on a voice error */ }
-    finish();
+    if (!text){ setTimeout(finish, 600); return; }
+    let rec = null;
+    const key = rvKey(who, text);
+    if (RV.have.has(key)) try { rec = await rvTx("readonly", st => st.get(key)); } catch(e){}
+    if (my !== speakToken || done) return finish();
+    if (!rec || !rec.blob){
+      // Not recorded yet: leave a gap about as long as the line, so the scene keeps its rhythm.
+      try { if (!$("#stage").hidden) setStatus(`${who.charAt(0) + who.slice(1).toLowerCase()}'s line isn't recorded yet`); } catch(e){}
+      const words = spokenText(text).split(/\s+/).filter(Boolean).length;
+      const g = setTimeout(finish, Math.min(9000, 600 + words * 380 / (S.rate || 1)));
+      RV.stop = () => { clearTimeout(g); finish(); };
+      return;
+    }
+    const a = RV.player, url = URL.createObjectURL(rec.blob);
+    let g;
+    const end = () => { a.onended = a.onerror = null; clearTimeout(g); try { URL.revokeObjectURL(url); } catch(e){} if (RV.stop === stop) RV.stop = null; finish(); };
+    const stop = () => { try { a.pause(); } catch(e){} end(); };
+    RV.stop = stop;
+    a.muted = false; a.src = url;
+    try { a.playbackRate = S.rate || 1; } catch(e){}
+    a.onended = end; a.onerror = end;
+    g = setTimeout(end, ((rec.dur || 20) / (S.rate || 1)) * 1000 + 2500);
+    const p = a.play(); if (p && p.catch) p.catch(end);
   });
 }
-function stopSpeaking(){ speakToken++; if (canTTS) speechSynthesis.cancel(); elStop(); speakingDone && speakingDone(); }
+function stopSpeaking(){ speakToken++; if (RV.stop){ const s = RV.stop; RV.stop = null; s(); } speakingDone && speakingDone(); }
 
 /* ---------- audio level (pause detection) ---------- */
 let actx, analyser, levelBuf, floor = 0.01, lastVoiceAt = 0, voicedMs = 0, lastTick = 0, levelRAF;
@@ -2859,8 +2288,11 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
   $("#bNext").setAttribute("aria-label", mode === "headshot" ? "Take photo" : "Next line");
   $("#prompter").hidden = true;
   // Unlock speech on iOS: must be inside the tap.
-  if (mode === "scene" && !room && elOn()) elUnlock();
-  if (canTTS && mode === "scene" && !room){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }
+  if (mode === "scene" && !room){
+    rvUnlock();
+    const miss = rvMissing();
+    if (miss) toast(`${miss} of the reader's lines ${miss > 1 ? "aren't" : "isn't"} recorded yet, so ${miss > 1 ? "they'll be" : "it'll be"} a silent pause. Record them on the Reader page.`, 7000);
+  }
   $("#setup").hidden = true; $("#review").hidden = true; $("#editor").hidden = true; $("#rehearsal").hidden = true; $("#stage").hidden = false;
   $("#endcard").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true;
   $("#recpill").classList.remove("on");
@@ -2925,7 +2357,6 @@ async function begin(recording, mode = "scene", key = null, rehearse = false){
     setStatus("Frame your headshot, then tap SNAP");
     return;
   }
-  if (mode === "scene" && !room) elPrefetch(run.idx, 3);
   // A real take waits on the camera screen until the actor taps REC, then counts down 5 seconds
   // so they can get into position. Rehearsing without recording starts after a short 3.
   const me = run;
@@ -3138,7 +2569,6 @@ async function goTo(i){
   const line = LINES[i];
   const mine = line.who === ME;
   renderPrompter(i);
-  elPrefetch(i + 1, 2);
   if (mine){
     run.turn = "actor"; run.turnStart = performance.now(); run.guardUntil = run.turnStart + (S.audio==="speaker" ? 250 : 0);
     run.lineW = normWords(line.spoken);
@@ -3411,11 +2841,6 @@ function renderShots(){
   $("#shrink").disabled = tot <= LIMIT * 0.95 || !!SHRINK.job;
   $("#dlAll").disabled = !done;
   $("#dlAll").textContent = done ? `Download all (${done} file${done>1?"s":""})` : "Download all";
-  // main button follows the next missing shot
-  const g = $("#goRecord");
-  if (nk){ g.textContent = nk === "headshot" ? "Take headshot" : `● Record ${shotLabel(nk)}`; g.className = "btn rec big"; }
-  else { g.textContent = "Send to agent"; g.className = "btn primary big"; }
-  g.disabled = false;
   $("#sendAgent").disabled = !done;
   try { renderSend(); } catch(e){ /* first run */ }
 }
@@ -3434,7 +2859,7 @@ function startShot(key){
   if (!LINES.length || !ME){
     showScreen("#setup");
     toast(`Paste the sides for Scene ${sc} first.`);
-    $("#h-script").scrollIntoView({behavior:"smooth"});
+    goPage("sides");
     return;
   }
   begin(true, "scene", key);
@@ -3652,7 +3077,7 @@ async function checkDevices(){
     const st = await navigator.mediaDevices.getUserMedia({video:{facingMode:S.facing}, audio:true});
     st.getTracks().forEach(t => t.stop());
     out.textContent = "Camera and mic are working. You're ready to record.";
-    if (isFile) Promise.all([permState("camera"), permState("microphone")]).then(([c,m]) => { $("#fileTip").hidden = (c === "granted" && m === "granted"); });
+    if (isFile) Promise.all([permState("camera"), permState("microphone")]).then(([c,m]) => {  });
     const b = $("#blocker");
     if (!b.hidden){ b.classList.add("ok"); $("#blkTitle").textContent = "Camera and mic are working now"; $("#blkBody").innerHTML = "<p>You're ready to record a take.</p>"; $("#blkRetry").hidden = true; }
     return true;
@@ -3663,7 +3088,7 @@ $("#blkRetry").onclick = checkDevices;
 // Show a known blocker as soon as the page opens, without prompting for anything.
 (function(){
   const env = diagnoseEnv();
-  if (!env && isFile && !isMobile) Promise.all([permState("camera"), permState("microphone")]).then(([c,m]) => { $("#fileTip").hidden = (c === "granted" && m === "granted"); });
+  if (!env && isFile && !isMobile) Promise.all([permState("camera"), permState("microphone")]).then(([c,m]) => {  });
   if (env) showProblem(env);
   else if (navigator.permissions && navigator.permissions.query){
     Promise.all(["camera","microphone"].map(n => navigator.permissions.query({name:n}).then(r=>r.state).catch(()=> "prompt")))
@@ -3672,14 +3097,12 @@ $("#blkRetry").onclick = checkDevices;
 })();
 
 /* ---------- controls ---------- */
-$("#goRecord").onclick = () => { const nk = nextMissing(); nk ? startShot(nk) : openSend(); };
-$("#goRehearse").onclick = () => startRehearsal();
 $("#dlAll").onclick = downloadAll;
 
 /* ---------- audition sheet ---------- */
 function renderHello(){
   const first = cleanPart(P.name).split(" ")[0];
-  $("#h-hello").textContent = first ? `Hello ${first}, welcome.` : "Hello, welcome to TapeMate.";
+  $("#h-welcome").textContent = first ? `Hello ${first}, welcome.` : "Hello, welcome to TapeMate.";
   $("#namePreview").textContent = `${fileBase("s1t1", true)}.mp4`;
 }
 [["#pName","name"],["#pAgency","agency"],["#pProd","production"],["#pChar","character"]].forEach(([id, k]) => {
@@ -3710,7 +3133,7 @@ $("#newAudition").onclick = async () => {
   $("#pProd").value = ""; $("#pChar").value = "";
   renderHello(); showScene(1); renderShots(); await renderLibrary(); renderStorage();
   b.disabled = false;
-  window.scrollTo(0, 0);
+  goPage("sheet");
   toast(had ? `${title} is saved in your library. Here's a fresh start.` : "Fresh start. Your name and agency are kept.", 6000);
   $("#pProd").focus();
 };
@@ -4020,7 +3443,7 @@ function renderRehearse(){
   $("#rhWho").innerHTML = ready
     ? `Scene ${CUR}: you're <b>${esc(ME)}</b>, with ${mine} of the ${LINES.length} lines. <button class="btn" type="button" id="rhChange">Change</button>`
     : `There are no sides for Scene ${CUR} yet. <button class="btn" type="button" id="rhChange">Paste them</button>`;
-  $("#rhChange").onclick = () => $("#h-script").scrollIntoView({behavior: "smooth"});
+  $("#rhChange").onclick = () => goPage("sides");
   const opt = (l, i) => `<option value="${i}">${i + 1}. ${l.who === ME ? "You" : esc(cap(l.who))}: ${esc(snippet(l.text))}</option>`;
   const f = $("#rhFrom"), t = $("#rhTo");
   f.innerHTML = t.innerHTML = LINES.map(opt).join("");
@@ -4066,7 +3489,7 @@ $("#rhStart").onclick = () => startRehearsal();
 function startRehearsal(){
   if (!LINES.length || !ME){
     showScreen("#setup"); toast(`Paste the sides for Scene ${CUR} first.`);
-    $("#h-script").scrollIntoView({behavior: "smooth"}); return;
+    goPage("sides"); return;
   }
   syncRange();
   if (RH.mode === "mock"){ const env = diagnoseEnv(); if (env){ showScreen("#setup"); showProblem(env); return; } }
@@ -4188,7 +3611,7 @@ function showRehearsal(){
   }).join("");
 }
 $("#rsAgain").onclick = () => { if (CUR !== RH.scene) showScene(RH.scene); startRehearsal(); };
-$("#rsBack").onclick = () => { dropMock(); showScreen("#setup"); renderRehearse(); $("#rhCard").scrollIntoView({block: "start"}); };
+$("#rsBack").onclick = () => { dropMock(); showScreen("#setup"); renderRehearse(); goPage("rehearse"); };
 $("#rsKeep").onclick = async () => {
   const k = RH.keepKey, m = RH.mock; if (!k || !m) return;
   RH.mock = null;
@@ -4210,8 +3633,9 @@ function canShareFiles(files){ try { return !!(files.length && navigator.share &
 function openSend(){
   const p = $("#sendPanel"); p.hidden = false; $("#sendAgent").setAttribute("aria-expanded", "true");
   showScreen("#setup");
+  goPage("takes");
   renderSend();
-  p.scrollIntoView({behavior: "smooth", block: "center"});
+  requestAnimationFrame(() => p.scrollIntoView({behavior: "smooth", block: "center"}));
 }
 function renderSend(){
   const p = $("#sendPanel"); if (p.hidden) return;
@@ -4260,6 +3684,7 @@ $("#sendWT").addEventListener("click", () => toast(isMobile ? "On WeTransfer, ta
 
 /* ---------- boot ---------- */
 booted = true;
+rvLoad();
 renderHello();
 showScene(1);
 renderShots();
@@ -4302,11 +3727,10 @@ function apply(id, fromUser){
   $("#heroEyebrow").textContent = t.eyebrow;
   $("#heroTitle").textContent = t.h1;
   $("#tbBadge").textContent = t.badge;
-  $("#heroCredit").innerHTML = `Photo: <a href="${t.link}" target="_blank" rel="noopener">${esc(t.who)}</a> on Unsplash`;
   if (fromUser && !$("#themeInline").hidden) $("#themeInline").hidden = true;
 }
 document.addEventListener("click", e => {
-  const b = e.target.closest(".tcard"); if (b){ apply(b.dataset.theme, true); }
+  const b = e.target.closest(".tcard"); if (b){ apply(b.dataset.theme, true); if ($("#stage").hidden){ openPop(false); goPage("sheet"); } }
 });
 apply(cur(), false);
 if (!store.get("tm.themeChosen")) $("#themeInline").hidden = false;
@@ -4321,7 +3745,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidde
 new MutationObserver(() => { if (!$("#stage").hidden) openPop(false); }).observe($("#stage"), {attributes: true, attributeFilter: ["hidden"]});
 
 /* phones: the sidebar becomes a floating bar of the same buttons along the bottom */
-const MNAV_LABEL = {helloCard: "Sheet", rhCard: "Rehearse", shotsCard: "Takes", libCard: "Library", sidesCard: "Sides", readerCard: "Reader", camCard: "Camera", send: "Send"};
+const MNAV_LABEL = {sheet: "Sheet", rehearse: "Rehearse", takes: "Takes", library: "Library", sides: "Sides", reader: "Reader", camera: "Camera", send: "Send"};
 document.querySelectorAll(".rail a[data-go]").forEach(a => {
   const b = a.cloneNode(true);
   b.removeAttribute("data-tip");
@@ -4340,26 +3764,35 @@ function backToSetup(){
   }
   return !$("#setup").hidden;
 }
+/* One page per sidebar button: only the cards of the chosen page show. */
+const PAGES = ["sheet", "sides", "rehearse", "takes", "library", "reader", "camera"];
+function goPage(id, el){
+  if (!PAGES.includes(id)) id = "sheet";
+  backToSetup();
+  document.querySelectorAll("#setup [data-page]").forEach(c => c.classList.toggle("on", c.dataset.page === id));
+  document.querySelectorAll(".rail a[data-go], .mnav a[data-go]").forEach(a => {
+    const on = a.dataset.go === id; a.classList.toggle("on", on);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  root.dataset.page = id;
+  const m = document.querySelector(".mnav a.on"); if (m) m.scrollIntoView({block: "nearest", inline: "nearest"});
+  if (el) requestAnimationFrame(() => { const x = typeof el === "string" ? $(el) : el; if (x) x.scrollIntoView({behavior: "smooth", block: "start"}); });
+  else window.scrollTo(0, 0);
+}
+window.goPage = goPage;
+goPage("sheet");
 document.querySelectorAll(".rail a[data-go], .mnav a[data-go]").forEach(a => a.addEventListener("click", e => {
   e.preventDefault();
   if (!backToSetup()) return;
   const go = a.dataset.go;
   if (go === "send"){
+    goPage("takes");
     const p = $("#sendPanel"); if (p.hidden) $("#sendAgent").click();
     requestAnimationFrame(() => ($("#sendPanel").hidden ? $("#shotsCard") : $("#sendPanel")).scrollIntoView({behavior: "smooth", block: "start"}));
     return;
   }
-  requestAnimationFrame(() => { const el = document.getElementById(go); if (el) el.scrollIntoView({behavior: "smooth", block: "start"}); });
+  goPage(go);
 }));
-const navLinks = [...document.querySelectorAll('.rail a[data-go]:not([data-go="send"]), .mnav a[data-go]:not([data-go="send"])')];
-const seen = new Map();
-const io = new IntersectionObserver(ents => {
-  ents.forEach(en => seen.set(en.target.id, en.isIntersecting ? en.intersectionRect.height : 0));
-  let best = null, bh = 0; seen.forEach((h, id) => { if (h > bh){ bh = h; best = id; } });
-  navLinks.forEach(a => a.classList.toggle("on", a.dataset.go === best));
-}, {threshold: [0, .1, .25, .5, .75, 1], rootMargin: "-60px 0px -35% 0px"});
-navLinks.forEach(a => { const el = document.getElementById(a.dataset.go); if (el) io.observe(el); });
-navLinks.forEach(a => a.addEventListener("click", () => { if (a.closest(".mnav")) a.scrollIntoView({block: "nearest", inline: "nearest"}); }));
 document.querySelectorAll("#setup .card[id]").forEach(c => c.style.scrollMarginTop = "72px");
 
 /* header photo + top bar follow the audition sheet */
@@ -4388,6 +3821,7 @@ function check(){
   const sm = size.match(/([\d.]+)\s*(KB|MB|GB)?\s*of\s*100/i); let sp = 0;
   if (sm){ const n = parseFloat(sm[1]); sp = (/GB/i.test(sm[2]) ? n * 1024 : /KB/i.test(sm[2]) ? n / 1024 : n) / 100; }
   const sh = shots.match(/(\d+)\s*of\s*(\d+)/);
+  const rvT = LINES.filter(l => l.who !== ME).length, rvD = LINES.filter(l => l.who !== ME && rvHas(l)).length;
   const last = (rh.match(/(\d+)%(?!.*\d+%)/) || [])[1];
   const rows = [
     [1, "Quality", txt("#qualityNow") || "—"],
@@ -4395,13 +3829,13 @@ function check(){
     [sh ? +sh[1] / Math.max(1, +sh[2]) : 0, "Shots recorded", sh ? `${sh[1]} / ${sh[2]}` : "—"],
     ...(S.reader === "room"
       ? [[1, "Reader", "In the room"], [1, "On screen in takes", pressed("#roomLines") || "—"]]
-      : [[1, "Reader listens", pressed("#cueMode") || "—"], [1, "Reader audio", pressed("#audioMode") || "—"], [1, "Voices", elOn() ? "ElevenLabs" : "Built-in"]]),
+      : [[1, "Reader listens", pressed("#cueMode") || "—"], [1, "Reader audio", pressed("#audioMode") || "—"], [rvT ? rvD / rvT : 0, "Reader lines", rvT ? `${rvD} / ${rvT} recorded` : "—"]]),
     [last ? last / 100 : 0, "Last rehearse score", last ? last + "%" : "Not yet"],
   ];
-  const cast = [...document.querySelectorAll("#voices .vrow")].map(r => {
-    const who = (r.querySelector(".who") || {}).firstChild; const sel = r.querySelector("select");
-    return {who: who ? who.textContent.trim() : "", v: sel && sel.selectedOptions[0] ? sel.selectedOptions[0].textContent.trim() : ""};
-  }).filter(c => c.who);
+  const cast = [...new Set(LINES.filter(l => l.who !== ME).map(l => l.who))].map(who => {
+    const ls = LINES.filter(l => l.who === who), d = ls.filter(rvHas).length;
+    return {who, v: d === ls.length ? "Your voice, all recorded" : `Your voice, ${d} of ${ls.length} lines`};
+  });
   const meB = $('#chips [aria-pressed="true"]'); const me = meB && meB.firstChild ? meB.firstChild.textContent.trim() : "";
   const html = rows.map(([p, k, v, over]) => `<div class="crow">${RING(over ? 1.01 : p)}<span>${k}</span><span class="v">${esc(v)}</span></div>`).join("")
     + "|" + (me ? `<div class="cperson"><span class="ini">${esc(me.slice(0, 2))}</span><div><b>${esc(me)}</b><small>You</small></div><span class="tag2">On camera</span></div>` : "")
@@ -4412,7 +3846,7 @@ function check(){
   $("#castRows").innerHTML = b || `<p class="hint">Load your sides and pick your character to see who the reader plays.</p>`;
 }
 setInterval(check, 700); check();
-$("#checkSend").onclick = () => { if ($("#sendPanel").hidden) $("#sendAgent").click(); requestAnimationFrame(() => ($("#sendPanel").hidden ? $("#shotsCard") : $("#sendPanel")).scrollIntoView({behavior: "smooth", block: "start"})); };
+$("#checkSend").onclick = () => { goPage("takes"); if ($("#sendPanel").hidden) $("#sendAgent").click(); requestAnimationFrame(() => ($("#sendPanel").hidden ? $("#shotsCard") : $("#sendPanel")).scrollIntoView({behavior: "smooth", block: "start"})); };
 /* the "●" at the start of Record / Redo buttons becomes a small, refined record dot */
 function dots(){
   document.querySelectorAll("button.btn, label.btn").forEach(b => {
@@ -4427,6 +3861,61 @@ let dq = false;
 new MutationObserver(() => { if (!dq){ dq = true; requestAnimationFrame(() => { dq = false; dots(); }); } }).observe(document.body, {childList: true, subtree: true, characterData: true});
 dots();
 window.__tmTheme = {apply: id => apply(id, true), list: THEMES.map(t => t.id)};
+})();
+</script>
+<script>
+/* ===== V18: Layout button: how the sidebar looks (kept apart from the main app script) ===== */
+(function(){
+const $ = s => document.querySelector(s);
+const root = document.documentElement, rail = $(".rail");
+const store = {get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }};
+const HINT = {sheet: "Your name, the role and the agency", sides: "Add the script and pick your character", rehearse: "Run your lines with the reader", takes: "Record your slate, scenes and takes", library: "Every audition you have saved", reader: "Record the other parts in your own voice", camera: "Choose a camera and set the prompter", send: "Check your files and send them off"};
+const STEP = {sheet: 1, sides: 2, rehearse: 3, takes: 4, send: 5};
+const LAYOUTS = ["icons", "names", "notes", "steps"];
+
+/* names, notes and numbers on each sidebar button (the phone bar was copied before this, so it keeps its own labels) */
+const mark = rail.querySelector(".mark");
+mark.insertAdjacentHTML("beforeend", '<span class="rhead">TapeMate</span>');
+const links = {};
+rail.querySelectorAll("a[data-go]").forEach(a => {
+  const k = a.dataset.go; links[k] = a;
+  a.insertAdjacentHTML("afterbegin", `<span class="num${STEP[k] ? "" : " dot"}" aria-hidden="true">${STEP[k] || ""}</span>`);
+  a.insertAdjacentHTML("beforeend", `<span class="lbl" aria-hidden="true">${a.getAttribute("aria-label")}</span><span class="hint" aria-hidden="true">${HINT[k] || ""}</span>`);
+});
+const mk = (cls, text) => { const e = document.createElement("span"); e.className = cls; e.textContent = text; return e; };
+const intro = mk("intro", "Work down the list, from your audition sheet to sending your tapes.");
+const g1 = mk("group", "Make your tape"), g2 = mk("group", "Your setup");
+const sp = rail.querySelector(".sp"), hr = rail.querySelector("hr");
+const ORDER = {
+  normal: [mark, links.sheet, links.sides, links.rehearse, links.takes, links.library, links.reader, links.camera, sp, hr, links.send, intro, g1, g2],
+  steps: [mark, intro, g1, links.sheet, links.sides, links.rehearse, links.takes, links.send, g2, links.library, links.reader, links.camera, sp, hr]
+};
+
+const btn = $("#layoutBtn"), pop = $("#layoutPop");
+function apply(id, fromUser){
+  if (!LAYOUTS.includes(id)) id = "icons";
+  if (id === "icons") root.removeAttribute("data-layout"); else root.setAttribute("data-layout", id);
+  (id === "steps" ? ORDER.steps : ORDER.normal).forEach(el => el && rail.appendChild(el));
+  pop.querySelectorAll(".lopt").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.layout === id)));
+  if (fromUser) store.set("tm.layout", id);
+}
+apply(store.get("tm.layout") || "icons", false);
+
+/* the dropdown: stays open so you can flick between layouts, closes on a click outside or Escape */
+const place = () => { const r = btn.getBoundingClientRect(); pop.style.top = (r.bottom + 8) + "px"; pop.style.right = Math.max(12, innerWidth - r.right) + "px"; };
+const openPop = on => {
+  pop.hidden = !on; btn.setAttribute("aria-expanded", String(on));
+  if (on){ place(); (pop.querySelector('.lopt[aria-pressed="true"]') || pop.querySelector(".lopt")).focus(); }
+};
+btn.addEventListener("click", () => openPop(pop.hidden));
+$("#themeBtn").addEventListener("click", () => openPop(false));
+pop.addEventListener("click", e => { const b = e.target.closest(".lopt"); if (b) apply(b.dataset.layout, true); });
+document.addEventListener("click", e => { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) openPop(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidden){ openPop(false); btn.focus(); } });
+addEventListener("resize", () => { if (!pop.hidden) place(); });
+/* never during a take */
+new MutationObserver(() => { if (!$("#stage").hidden) openPop(false); }).observe($("#stage"), {attributes: true, attributeFilter: ["hidden"]});
+window.__tmLayout = {apply: id => apply(id, true), list: LAYOUTS};
 })();
 </script>
 </body>
