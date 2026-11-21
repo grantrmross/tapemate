@@ -8,6 +8,14 @@
 (function(){var t="booth";try{t=localStorage.getItem("tm.theme")||t}catch(e){}if(!/^(academy|carpet|champagne|booth|draft)$/.test(t))t="booth";document.documentElement.setAttribute("data-theme",t)})();
 (function(){var l="icons";try{l=localStorage.getItem("tm.layout")||l}catch(e){}if(/^(names|notes|steps)$/.test(l))document.documentElement.setAttribute("data-layout",l)})();</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TapeMate">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script>/* lets the browser install TapeMate as an app (only on the web, not from a saved file) */
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol))addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script>
 <title>TapeMate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Bebas+Neue&family=Cinzel:wght@500;700&family=Inter:wght@200;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
