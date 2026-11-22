@@ -607,8 +607,9 @@ html[data-theme="draft"] #setup .card h2.pt{text-transform:uppercase;letter-spac
 .btn.sendred .i{color:#fff}
 html[data-theme] .btn.sendred{text-transform:none;letter-spacing:.01em}
 /* Upload: outlined in the theme's button colour */
-#fileLabel{border:1.5px solid var(--accent);color:var(--fg);cursor:pointer}
-#fileLabel:hover{background:color-mix(in srgb,var(--accent) 12%,var(--raise));border-color:var(--accent)}
+#fileLabel{background:linear-gradient(180deg,#d42a33,#a5141d);border:1px solid #8c0f17;color:#fff;font-weight:700;border-radius:999px;padding:9px 20px;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 6px 18px -8px rgba(200,20,30,.75)}
+#fileLabel:hover{background:linear-gradient(180deg,#e0353e,#b3171f);border-color:#8c0f17}
+html[data-theme] #fileLabel{text-transform:none;letter-spacing:.01em;color:#fff}
 /* recording the reader's lines */
 .rvbox{display:flex;flex-direction:column;gap:12px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px;background:var(--bg)}
 .rvbox h3{margin:0 0 4px;font-size:16px;font-family:var(--f-ui)}
@@ -1607,8 +1608,25 @@ function roleFor(n, lines){
   }
   return chars.sort((a,b) => counts[b]-counts[a])[0] || null;
 }
+/* Each side keeps its own start line, locked until the actor taps another line or swaps the sides.
+   It's stored with the line's text too, so a small edit above it doesn't move it to the wrong line. */
+function lockStart(n, i){
+  P.starts = P.starts || {};
+  if (i > 0 && LINES[i]) P.starts[n] = {i, who: LINES[i].who, text: LINES[i].text};
+  else delete P.starts[n];
+  saveP();
+}
+function savedStart(n, lines){
+  const s = P.starts && P.starts[n]; if (!s) return 0;
+  const same = l => l && l.who === s.who && l.text === s.text;
+  if (same(lines[s.i])) return s.i;
+  let best = -1;
+  lines.forEach((l, k) => { if (same(l) && (best < 0 || Math.abs(k - s.i) < Math.abs(best - s.i))) best = k; });
+  if (best >= 0) return best;
+  return s.i < lines.length ? s.i : 0;
+}
 function showScene(n){
-  CUR = n; scriptEl.value = P.scripts[n] || ""; startIdx = 0;
+  CUR = n; scriptEl.value = P.scripts[n] || ""; startIdx = savedStart(n, parseScript(scriptEl.value));
   renderTabs(); reparse();
 }
 function renderTabs(){
@@ -1630,7 +1648,7 @@ function reparse(){
   const counts = {};
   LINES.forEach(l => counts[l.who] = (counts[l.who]||0)+1);
   const chars = Object.keys(counts);
-  if (startIdx >= LINES.length) startIdx = 0;
+  startIdx = savedStart(CUR, LINES);
   const chips = $("#chips"); chips.innerHTML = "";
   chars.forEach(c => {
     const w = document.createElement("span"); w.className = "chipwrap";
@@ -1665,7 +1683,7 @@ function reparse(){
     r.type = "button";
     r.className = "pl" + (l.who===ME?" mine":"") + (i===startIdx?" start":"");
     r.innerHTML = `<span class="who">${esc(l.who)}</span><span class="txt">${fmtLine(l.text)}</span>`;
-    r.onclick = () => { startIdx = i; reparse(); };
+    r.onclick = () => { lockStart(CUR, i); reparse(); };
     pv.appendChild(r);
   });
   renderReaderLines();
@@ -1875,7 +1893,7 @@ $("#file").addEventListener("change", async e => {
   if (slow){ lab.textContent = "Reading…"; lab.setAttribute("aria-busy", "true"); }
   try {
     const text = await readSidesFile(f);
-    scriptEl.value = text; startIdx = 0; reparse();
+    scriptEl.value = text; LINES = []; lockStart(CUR, 0); reparse();
     const n = parseScript(text).length;
     toast(n ? `Read ${n} line${n === 1 ? "" : "s"} of dialogue from ${f.name}. Check them below.`
             : `Text read from ${f.name}, but no dialogue was found. Check the format below.`);
@@ -1885,8 +1903,8 @@ $("#file").addEventListener("change", async e => {
     lab.textContent = was; lab.removeAttribute("aria-busy");
   }
 });
-$("#loadSample").onclick = () => { scriptEl.value = SAMPLE; startIdx = 0; reparse(); };
-$("#clearScript").onclick = () => { scriptEl.value = ""; startIdx = 0; reparse(); scriptEl.focus(); };
+$("#loadSample").onclick = () => { scriptEl.value = SAMPLE; lockStart(CUR, 0); reparse(); };
+$("#clearScript").onclick = () => { scriptEl.value = ""; lockStart(CUR, 0); reparse(); scriptEl.focus(); };
 
 function langOf(){ return S.lang || (navigator.language || "en-US"); }
 /* Script language: only used to follow your words while you act. */
@@ -2491,12 +2509,47 @@ function pickMime(){
   const types = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4;codecs=avc1.42E01E,opus","video/mp4;codecs=avc1","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4"];
   return types.find(t => { try { return MediaRecorder.isTypeSupported(t); } catch(e){ return false; } }) || "";
 }
+/* The front camera's live preview is a mirror image. Takes are saved the same way round,
+   so what you see while recording is what you see on playback (a light switch on your left stays on your left). */
+let mirrorRig = null;
+function mirroredStream(src){
+  const vt = src.getVideoTracks()[0];
+  if (!vt || !HTMLCanvasElement.prototype.captureStream) return null;
+  const v = $("#cam"), st = vt.getSettings ? vt.getSettings() : {};
+  const c = document.createElement("canvas");
+  c.width = v.videoWidth || st.width || 1280; c.height = v.videoHeight || st.height || 720;
+  const g = c.getContext("2d", {alpha: false});
+  if (!g) return null;
+  const rig = {on: true, c, raf: 0, vfc: 0, out: null};
+  const draw = () => {
+    if (!rig.on) return;
+    const w = v.videoWidth, h = v.videoHeight;
+    if (w && h && (c.width !== w || c.height !== h)){ c.width = w; c.height = h; }
+    if (v.readyState >= 2){ g.setTransform(-1, 0, 0, 1, c.width, 0); g.drawImage(v, 0, 0, c.width, c.height); }
+    if (v.requestVideoFrameCallback) rig.vfc = v.requestVideoFrameCallback(draw);
+    else rig.raf = requestAnimationFrame(draw);
+  };
+  draw();
+  try { rig.out = c.captureStream(Math.min(30, Math.round(st.frameRate || 30))); } catch(e){ rig.on = false; return null; }
+  src.getAudioTracks().forEach(t => rig.out.addTrack(t));
+  return rig;
+}
+function stopMirror(){
+  const r = mirrorRig; mirrorRig = null; if (!r) return;
+  r.on = false;
+  try { if (r.vfc && $("#cam").cancelVideoFrameCallback) $("#cam").cancelVideoFrameCallback(r.vfc); } catch(e){}
+  cancelAnimationFrame(r.raf);
+  try { r.out.getVideoTracks().forEach(t => t.stop()); } catch(e){}
+}
 function startRecorder(){
   chunks = [];
   const mime = pickMime();
   const q = REC || {vbps: 1_000_000, abps: ABPS};
-  try { recorder = new MediaRecorder(stream, Object.assign({videoBitsPerSecond:Math.round(q.vbps), audioBitsPerSecond:q.abps}, mime ? {mimeType:mime} : {})); }
-  catch(e){ recorder = new MediaRecorder(stream); }
+  stopMirror();
+  if (S.facing === "user") mirrorRig = mirroredStream(stream);
+  const src = mirrorRig ? mirrorRig.out : stream;
+  try { recorder = new MediaRecorder(src, Object.assign({videoBitsPerSecond:Math.round(q.vbps), audioBitsPerSecond:q.abps}, mime ? {mimeType:mime} : {})); }
+  catch(e){ recorder = new MediaRecorder(src); }
   recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
   recorder.onstop = onRecorded;
   recorder.start(1000);
@@ -2650,6 +2703,7 @@ function finish(){
 }
 function exitStage(stayHidden){
   stopRec(); stopSpeaking(); stopLevel();
+  if (!recorder || recorder.state === "inactive") stopMirror();
   if (stream) stream.getTracks().forEach(t => t.stop());
   stream = null; run = null;
   $("#stage").hidden = true; $("#readyCard").hidden = true; $("#bRoll").hidden = true; $("#bFlip").hidden = true; $("#countdown").hidden = true;
@@ -2662,6 +2716,7 @@ async function onRecorded(){
   const type = (recorder.mimeType || (chunks[0] && chunks[0].type) || "video/webm").split(";")[0];
   const blob = new Blob(chunks, {type});
   const dur = (performance.now() - recStart)/1000;
+  stopMirror();
   if (stream) stream.getTracks().forEach(t => t.stop());
   stream = null; stopLevel();
   $("#stage").hidden = true;
@@ -3137,7 +3192,7 @@ $("#newAudition").onclick = async () => {
   SHOTS.forEach(sh => URL.revokeObjectURL(sh.url)); SHOTS.clear(); await idbClear();
   $("#sendPanel").hidden = true; $("#sendAgent").setAttribute("aria-expanded", "false");
   RH.hist = {}; RH.range = {};
-  P.production = ""; P.character = ""; P.scripts = {1:""}; P.roles = {}; saveP();
+  P.production = ""; P.character = ""; P.scripts = {1:""}; P.roles = {}; P.starts = {}; saveP();
   $("#pProd").value = ""; $("#pChar").value = "";
   renderHello(); showScene(1); renderShots(); await renderLibrary(); renderStorage();
   b.disabled = false;
