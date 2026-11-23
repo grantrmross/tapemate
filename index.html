@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#12161c">
 <script>/* pick the saved theme before first paint so there is no flash */
 (function(){var t="booth";try{t=localStorage.getItem("tm.theme")||t}catch(e){}if(!/^(academy|carpet|champagne|booth|draft)$/.test(t))t="booth";document.documentElement.setAttribute("data-theme",t)})();
-(function(){var l="icons";try{l=localStorage.getItem("tm.layout")||l}catch(e){}if(/^(names|notes|steps)$/.test(l))document.documentElement.setAttribute("data-layout",l)})();</script>
+(function(){var l="icons";try{l=localStorage.getItem("tm.layout")||l}catch(e){}if(/^(names|notes|steps)$/.test(l))document.documentElement.setAttribute("data-layout",l);var n="toolkit";try{n=localStorage.getItem("tm.nav")||n}catch(e){}if(!/^(toolkit|tabs|presets|top|float)$/.test(n))n="toolkit";document.documentElement.setAttribute("data-nav",n)})();</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TapeMate">
@@ -694,6 +694,162 @@ html[data-layout="steps"] .rail a .hint{font-size:12px;line-height:1.35;grid-col
 html[data-layout="steps"] .rail a.on .num{color:var(--rail-on-ink);border-color:var(--rail-on-ink)}
 html[data-layout="steps"] .rail hr,html[data-layout="steps"] .rail .sp{display:none}
 @media (max-width:760px){html[data-layout] body{padding-left:0}}
+</style>
+<style>
+/* ===== V20: five phone interfaces (three buttons), picked under the theme button ===== */
+.pn-ui,.pn-set,.pn-fold,.pn-back,.pn-foldsend{display:none}
+.pn-pick{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+.pn-pick .pn-note{margin:0;font-size:12px;color:var(--muted)}
+.pn-opts{display:grid;grid-template-columns:1fr;gap:6px}
+.pn-opt{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;padding:8px 10px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg);font-family:var(--f-ui);cursor:pointer}
+.pn-opt:hover{border-color:var(--muted)}
+.pn-opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
+.pn-opt svg{width:34px;height:52px;color:var(--fg)}
+.pn-opt b{display:block;font-size:13.5px}
+.pn-opt small{display:block;font-size:12px;color:var(--muted);line-height:1.35;margin-top:2px}
+.tpop{max-height:calc(100dvh - 80px);overflow-y:auto}
+
+@media (max-width:760px){
+  html[data-nav] .mnav{display:none!important}
+  .pn-ui{font-family:var(--f-ui)}
+  body:has(#setup[hidden]) .pn-ui{display:none!important}
+  .pn-ui .i{width:22px;height:22px}
+  /* the record button: a red dot in a ring, like a camera */
+  .pn-recbig{width:68px;height:68px;border-radius:50%;border:4px solid color-mix(in srgb,var(--fg) 92%,transparent);display:grid;place-items:center;background:var(--bg);box-shadow:0 6px 20px rgba(0,0,0,.45)}
+  .pn-recbig i{width:50px;height:50px;border-radius:50%;background:var(--rec);display:block}
+  .pn-recsm{width:28px;height:28px;border-radius:50%;border:2.5px solid currentColor;display:grid;place-items:center}
+  .pn-recsm i{width:16px;height:16px;border-radius:50%;background:var(--rec);display:block}
+  /* bottom bar (1, 2, 3) */
+  .pn-bar{position:fixed;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));height:70px;z-index:7;border-radius:22px;
+    background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 12px 32px -10px rgba(0,0,0,.55);
+    align-items:center;justify-content:space-around;padding:0 6px}
+  .pn-bar button{flex:1;max-width:120px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;background:none;color:var(--muted);font:600 11.5px var(--f-ui);border-radius:16px;padding:0;-webkit-tap-highlight-color:transparent;cursor:pointer}
+  .pn-bar button.on{color:var(--accent)}
+  html[data-nav="tabs"] .pn-bar button.on,html[data-nav="presets"] .pn-bar button.on.pn-fill{background:var(--accent-fill);color:var(--accent-fill-ink)}
+  html[data-nav="tabs"] .pn-bar button.on .pn-recsm{border-color:var(--accent-fill-ink)}
+  .pn-bar .pn-mid{margin-top:-34px;height:auto;gap:5px;color:var(--fg)}
+  .pn-bar .pn-mid.on{color:var(--fg)}
+  html[data-nav="toolkit"] .pn-bar,html[data-nav="tabs"] .pn-bar,html[data-nav="presets"] .pn-bar{display:flex}
+  .pn-dim:not([hidden]),.pn-sheet:not([hidden]),.pn-menu:not([hidden]){display:block}
+  .pn-bar [data-for]{display:none!important}
+  html[data-nav="toolkit"] .pn-bar [data-for~="toolkit"],html[data-nav="tabs"] .pn-bar [data-for~="tabs"],html[data-nav="presets"] .pn-bar [data-for~="presets"]{display:flex!important}
+
+  /* dim layer and sheets (1 and 3) */
+  .pn-dim{position:fixed;inset:0;z-index:6;background:rgba(0,0,0,.5)}
+  .pn-dim[hidden],.pn-sheet[hidden],.pn-menu[hidden]{display:none!important}
+  .pn-sheet{position:fixed;z-index:8;left:0;right:0;bottom:0;max-height:86dvh;overflow-y:auto;background:var(--panel);color:var(--fg);border-top:1px solid var(--line);border-radius:26px 26px 0 0;
+    padding:10px max(16px,env(safe-area-inset-left)) calc(26px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.6);animation:pnUp .22s ease-out}
+  @keyframes pnUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+  #pnPresets{left:8px;right:8px;bottom:calc(92px + env(safe-area-inset-bottom));border:1px solid var(--line);border-radius:24px;max-height:calc(100dvh - 170px);padding-bottom:16px}
+  .pn-grab{width:40px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--muted) 55%,transparent);margin:0 auto 12px}
+  .pn-sh-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .pn-sh-h h3{margin:0;font-family:var(--display);font-weight:400;font-size:30px;letter-spacing:.02em;line-height:1}
+  html:not([data-theme="booth"]) .pn-sh-h h3{font-size:24px;font-weight:600}
+  .pn-x{width:36px;height:36px;border-radius:50%;background:var(--raise);border:0;display:grid;place-items:center;color:var(--muted);cursor:pointer}
+  .pn-x .i{width:18px;height:18px}
+  .pn-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .pn-tile{background:var(--raise);border:1px solid var(--line);border-radius:16px;padding:14px 6px 12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-height:104px;color:var(--fg);font-family:var(--f-ui);cursor:pointer}
+  .pn-tile .i{color:var(--accent);width:26px;height:26px}
+  .pn-tile b{font-size:13px;line-height:1.2}
+  .pn-tile span{font-size:11px;color:var(--muted);line-height:1.25}
+  .pn-red{background:linear-gradient(180deg,#d42a33,#a5141d)!important;border-color:#8c0f17!important;color:#fff!important}
+  .pn-red .i,.pn-red span,.pn-red small{color:#fff!important}
+
+  /* presets panel (3) */
+  .pn-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .pn-chip{border:1px solid var(--line);background:var(--raise);color:var(--fg);border-radius:999px;padding:9px 13px;font:600 13px var(--f-ui);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .pn-chip.on{background:var(--accent-fill);color:var(--accent-fill-ink);border-color:transparent}
+  .pn-chip.ghost{background:none;color:var(--muted);border-style:dashed}
+  .pn-chip .del{margin-left:2px;opacity:.6;font-size:15px;line-height:1}
+  .pn-save{display:flex;gap:8px;margin-top:10px}
+  .pn-save[hidden]{display:none}
+  .pn-save input{flex:1;min-width:0;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font:14px var(--f-ui)}
+  .pn-save button{border:0;border-radius:10px;padding:0 14px;font:700 13px var(--f-ui);background:var(--accent-fill);color:var(--accent-fill-ink);cursor:pointer}
+  .pn-tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .pn-tgl{background:var(--raise);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;text-align:left;color:var(--fg);font-family:var(--f-ui);cursor:pointer}
+  .pn-tgl .r{display:flex;justify-content:space-between;align-items:center;color:var(--accent)}
+  .pn-tgl .r .i{width:20px;height:20px}
+  .pn-tgl .r em{font-style:normal;font-size:10.5px;color:var(--muted);font-weight:600}
+  .pn-tgl small{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .pn-tgl b{font-size:15.5px}
+  .pn-tgl.on{background:color-mix(in srgb,var(--accent) 14%,var(--raise));border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+  .pn-sub{font-size:11.5px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:16px 2px 8px}
+  .pn-links{display:flex;flex-wrap:wrap;gap:8px}
+  .pn-links button{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--f-ui);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer}
+  .pn-links button .i{color:var(--accent);width:16px;height:16px}
+
+  /* settings page (2) and setup folds (4) */
+  html[data-nav="tabs"] .pn-set{display:flex}
+  .pn-set{flex-direction:column;gap:0}
+  .pn-set .pn-grp{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:16px 4px 8px}
+  .pn-list{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .pn-li{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font-family:var(--f-ui);text-align:left;cursor:pointer}
+  .pn-li:last-child{border-bottom:0}
+  .pn-li .ib{width:32px;height:32px;border-radius:9px;background:var(--raise);display:grid;place-items:center;color:var(--accent);flex:none}
+  .pn-li .ib .i{width:18px;height:18px}
+  .pn-li .ib.pn-red{border:0}
+  .pn-li b{flex:1;font-size:15px;font-weight:500}
+  .pn-li span{font-size:13.5px;color:var(--muted);text-align:right}
+  .pn-li .cv{color:var(--muted);opacity:.6;width:16px;height:16px;flex:none}
+  .pn-ttl{font-family:var(--display);font-size:clamp(34px,9vw,44px);line-height:1;margin:2px 0 0;color:var(--fg);display:flex;flex-direction:column;gap:10px}
+  html[data-theme="booth"] .pn-ttl{text-transform:uppercase;letter-spacing:.03em;font-weight:400}
+  html[data-theme="academy"] .pn-ttl,html[data-theme="draft"] .pn-ttl{text-transform:uppercase;font-size:30px}
+  html[data-theme="academy"] .pn-ttl{color:#e9c96a}
+  .pn-ttl::after{content:"";width:44px;height:3px;border-radius:2px;background:var(--accent)}
+  html[data-nav="tabs"][data-page="sheet"] .pn-back,html[data-nav="tabs"][data-page="rehearse"] .pn-back,html[data-nav="tabs"][data-page="library"] .pn-back,
+  html[data-nav="tabs"][data-page="reader"] .pn-back,html[data-nav="tabs"][data-page="camera"] .pn-back{display:inline-flex}
+  .pn-back{align-self:flex-start;align-items:center;gap:4px;border:1px solid var(--line);background:var(--panel);color:var(--accent);border-radius:999px;padding:7px 14px 7px 9px;font:600 13.5px var(--f-ui);cursor:pointer}
+  .pn-back .i{width:16px;height:16px}
+
+  /* 4: tabs at the top, nothing at the bottom */
+  html[data-nav="top"] .pn-top{display:flex}
+  .pn-top{position:sticky;top:var(--pn-top,54px);z-index:3;margin:0;padding:10px 12px 8px;background:var(--bg)}
+  .pn-top .in{flex:1;display:flex;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:4px}
+  .pn-top button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 0;border:0;border-radius:12px;background:none;font:600 14.5px var(--f-ui);color:var(--muted);cursor:pointer}
+  .pn-top button .i{width:17px;height:17px}
+  .pn-top button.on{background:var(--accent-fill);color:var(--accent-fill-ink)}
+  .pn-top .pn-recdot{width:9px;height:9px;border-radius:50%;background:var(--rec)}
+  html[data-nav="top"] .dash{padding-bottom:40px}
+  html[data-nav="top"] .pn-fold,html[data-nav="top"] .pn-foldsend{display:flex}
+  html[data-nav="top"] .pn-set{display:none!important}
+  .pn-fold{flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+  .pn-fold.pn-ttlrow{background:none;border:0}
+  .pn-fold .h{display:flex;align-items:center;gap:12px;padding:13px 14px;border:0;background:none;color:var(--fg);font-family:var(--f-ui);text-align:left;width:100%;cursor:pointer}
+  .pn-fold .h .i{color:var(--accent);width:20px;height:20px;flex:none}
+  .pn-fold .h b{flex:1;font-size:15px;font-weight:600}
+  .pn-fold .h span{font-size:13px;color:var(--muted)}
+  .pn-fold .h .cv{color:var(--muted);width:16px;height:16px;transition:transform .2s}
+  .pn-fold.open .h .cv{transform:rotate(180deg)}
+  .pn-fold.open{border-radius:14px 14px 0 0;border-bottom-color:transparent;margin-bottom:-18px;position:relative;z-index:1}
+  html[data-nav="top"][data-page="settings"] #setup .col-main > [data-page].pn-show{display:flex!important;border-radius:0 0 14px 14px;border-top:0;padding-top:4px}
+  html[data-nav="top"][data-page="settings"] #setup .pn-show h2.pt{display:none!important}
+  html[data-nav="top"][data-page="settings"] #setup .pn-show + .pn-show{margin-top:-18px;border-radius:0 0 14px 14px}
+  .pn-foldsend{justify-content:center;gap:8px;width:100%;margin-top:4px}
+
+  /* 5: floating camera buttons and a full-screen menu */
+  html[data-nav="float"] .pn-float{display:flex}
+  .pn-fade{position:fixed;left:0;right:0;bottom:0;height:150px;z-index:6;pointer-events:none;background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 96%,transparent) 62%)}
+  html[data-nav="float"] .pn-fade{display:block}
+  .pn-float{position:fixed;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom));z-index:7;align-items:center;justify-content:space-between;padding:0 max(30px,env(safe-area-inset-left))}
+  .pn-glass{width:58px;height:58px;border-radius:50%;background:color-mix(in srgb,var(--raise) 92%,transparent);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--fg);box-shadow:0 8px 24px rgba(0,0,0,.4);font:600 9.5px var(--f-ui);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;padding:0}
+  .pn-glass .i{color:var(--accent);width:20px;height:20px}
+  .pn-glass.on{border-color:var(--accent)}
+  .pn-float .pn-recbtn{border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--fg);font:600 11px var(--f-ui)}
+  .pn-float .pn-recbig{width:78px;height:78px}
+  .pn-float .pn-recbig i{width:58px;height:58px}
+  html[data-nav="float"] .dash{padding-bottom:150px}
+  .pn-menu{position:fixed;inset:0;z-index:8;background:var(--bg);color:var(--fg);overflow-y:auto;padding:calc(30px + env(safe-area-inset-top)) 28px 120px;animation:pnFade .18s ease-out;font-family:var(--f-ui)}
+  @keyframes pnFade{from{opacity:0}to{opacity:1}}
+  .pn-menu .pn-sub{margin:14px 0 2px}
+  .pn-menu .pn-mi{display:flex;align-items:center;gap:16px;width:100%;font-family:var(--display);font-size:30px;line-height:1.15;letter-spacing:.02em;padding:9px 0;color:var(--fg);border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+  html[data-theme="booth"] .pn-menu .pn-mi{text-transform:uppercase;font-size:33px}
+  html:not([data-theme="booth"]) .pn-menu .pn-mi{font-size:24px;font-weight:600}
+  .pn-menu .pn-mi .i{color:var(--accent);width:22px;height:22px;flex:none}
+  .pn-menu .pn-mi small{font-family:var(--f-ui);font-size:12.5px;color:var(--muted);margin-left:auto;letter-spacing:0;text-transform:none;font-weight:500;text-align:right}
+  .pn-menu .pn-mi.red,.pn-menu .pn-mi.red .i{color:#e5484d}
+  .pn-menu .pn-close{position:fixed;right:max(30px,env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom))}
+}
+@media (min-width:761px){.pn-set,.pn-fold,.pn-foldsend{display:none!important}}
 </style>
 </head>
 <body>
@@ -3828,7 +3984,7 @@ function backToSetup(){
   return !$("#setup").hidden;
 }
 /* One page per sidebar button: only the cards of the chosen page show. */
-const PAGES = ["sheet", "sides", "rehearse", "takes", "library", "reader", "camera"];
+const PAGES = ["sheet", "sides", "rehearse", "takes", "library", "reader", "camera", "settings"];
 function goPage(id, el){
   if (!PAGES.includes(id)) id = "sheet";
   backToSetup();
@@ -3979,6 +4135,315 @@ addEventListener("resize", () => { if (!pop.hidden) place(); });
 /* never during a take */
 new MutationObserver(() => { if (!$("#stage").hidden) openPop(false); }).observe($("#stage"), {attributes: true, attributeFilter: ["hidden"]});
 window.__tmLayout = {apply: id => apply(id, true), list: LAYOUTS};
+})();
+</script>
+<script>
+/* ===== V20: five phone interfaces, each with three buttons (kept apart from the main app script) ===== */
+(function(){
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const root = document.documentElement;
+const store = {get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const NAVS = [
+  {id: "toolkit", name: "Big Record button + Toolkit", sub: "Sides, a big round Record, and Toolkit, a drawer of tiles for everything else."},
+  {id: "tabs", name: "Three tabs + Settings page", sub: "Sides, Record and Settings along the bottom. Settings is a list page."},
+  {id: "presets", name: "Presets control panel", sub: "Sides, Record and Presets: saved setups and quick switches in one panel."},
+  {id: "top", name: "Three tabs at the top", sub: "Sides, Record and Setup under the logo. Nothing covers the bottom."},
+  {id: "float", name: "Floating camera buttons", sub: "Three round buttons float over the page. Menu opens one big list."}
+];
+const PHONE = matchMedia("(max-width:760px)");
+
+/* ---------- icons ---------- */
+const svg = (d, extra = "") => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extra}>${d}</svg>`;
+const railIcon = k => { const a = $(`.rail a[data-go="${k}"] svg`); return a ? a.outerHTML.replace('class="i"', 'class="i"') : ""; };
+const IC = {
+  sheet: railIcon("sheet"), sides: railIcon("sides"), rehearse: railIcon("rehearse"), takes: railIcon("takes"),
+  library: railIcon("library"), reader: railIcon("reader"), camera: railIcon("camera"), send: railIcon("send"),
+  prompter: svg('<path d="M4 7V4h16v3M9 20h6M12 4v16"/>'),
+  look: svg('<path d="M12 3a9 9 0 0 0 0 18c1 0 1.6-.8 1.6-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10.5" cy="7.2" r="1.1" fill="currentColor"/><circle cx="15" cy="7.6" r="1.1" fill="currentColor"/>'),
+  grid: svg('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
+  gear: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
+  sliders: svg('<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'),
+  menu: svg('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+  x: svg('<path d="M18 6 6 18M6 6l12 12"/>'),
+  down: svg('<path d="m6 9 6 6 6-6"/>').replace('class="i"', 'class="cv"'),
+  back: svg('<path d="m15 6-6 6 6 6"/>'),
+  timer: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>'),
+  plus: svg('<path d="M12 5v14M5 12h14"/>')
+};
+IC.chev = svg('<path d="m9 6 6 6-6 6"/>').replace('class="i"', 'class="cv"');
+
+/* ---------- what each setting says right now ---------- */
+const T = q => { const e = $(q); return e ? e.textContent.trim() : ""; };
+const pv = q => { const b = $(q + ' [aria-pressed="true"]'); return b ? b.dataset.v : ""; };
+const pt = q => T(q + ' [aria-pressed="true"]');
+const THEME_NAME = {booth: "Booth", academy: "Academy Gold", carpet: "Red Carpet", champagne: "Champagne", draft: "Final Draft"};
+function val(k){
+  switch (k){
+    case "sheet": { const v = id => ((($("#" + id) || {}).value) || "").trim(); return v("pProd") || v("pChar") || "Fill in"; }
+    case "rehearse": { const m = T("#rhHistory").match(/(\d+)%(?!.*\d+%)/); return m ? `Last run ${m[1]}%` : "Run your lines"; }
+    case "takes": { const m = T("#shotCount").match(/(\d+)\s*of\s*(\d+)/); return m ? `${m[1]} of ${m[2]}` : ""; }
+    case "send": { const m = T("#shotCount").match(/(\d+)\s*of\s*(\d+)/); return !m || m[1] === "0" ? "Nothing yet" : m[1] === m[2] ? "Ready" : `${m[1]} of ${m[2]} done`; }
+    case "reader": return pv("#readerWho") === "room" ? "In the room" : "My voice";
+    case "camera": return (pv("#facing") === "environment" ? "Back" : "Front") + " · " + (T("#qualityNow") || "720p");
+    case "prompter": return {all: "All lines", cues: "Cues only", none: "Off"}[pv("#prompt")] || "";
+    case "tail": return pv("#tail") === "0" ? "Keep rolling" : "Stop after 3 s";
+    case "library": { const m = T("#libCount").match(/\d+/); return m ? `${m[0]} saved` : "Empty"; }
+    case "look": return THEME_NAME[root.dataset.theme] || "";
+  }
+  return "";
+}
+const NAME = {sheet: "Audition sheet", sides: "Sides", rehearse: "Rehearse", takes: "Your takes", send: "Send to agent", reader: "Reader", camera: "Camera", prompter: "Prompter", library: "Library", look: "Look"};
+
+/* ---------- going places ---------- */
+const go = (k) => {
+  closeAll();
+  if (k === "look"){ setTimeout(() => $("#themeBtn").click(), 0); return; }
+  if (k === "send"){ $('.rail a[data-go="send"]').click(); return; }
+  if (k === "prompter"){ window.goPage("camera", "#prompt"); return; }
+  window.goPage(k);
+};
+function record(big){
+  if (root.dataset.page === "takes" && big){
+    const b = $("#shotList .shot.next .btn.rec") || $("#shotList .shot:not(.done) .btn.rec");
+    if (b){ b.click(); return; }
+  }
+  closeAll(); window.goPage("takes");
+}
+
+/* ---------- the buttons themselves ---------- */
+const host = document.createElement("div");
+host.className = "pn-host";
+host.innerHTML = `
+<nav class="pn-ui pn-bar" aria-label="Main buttons">
+  <button type="button" data-k="sides">${IC.sides}<span>Sides</span></button>
+  <button type="button" class="pn-mid" data-k="recbig" data-for="toolkit"><span class="pn-recbig"><i></i></span><span>Record</span></button>
+  <button type="button" data-k="rec" data-for="tabs presets"><span class="pn-recsm"><i></i></span><span>Record</span></button>
+  <button type="button" data-k="toolkit" data-for="toolkit">${IC.grid}<span>Toolkit</span></button>
+  <button type="button" data-k="settings" data-for="tabs">${IC.gear}<span>Settings</span></button>
+  <button type="button" class="pn-fill" data-k="presets" data-for="presets">${IC.sliders}<span>Presets</span></button>
+</nav>
+<div class="pn-ui pn-dim" id="pnDim" hidden></div>
+<section class="pn-ui pn-sheet" id="pnToolkit" hidden role="dialog" aria-label="Toolkit">
+  <div class="pn-grab"></div>
+  <div class="pn-sh-h"><h3>Toolkit</h3><button type="button" class="pn-x" data-close aria-label="Close">${IC.x}</button></div>
+  <div class="pn-tiles" id="pnTiles"></div>
+</section>
+<section class="pn-ui pn-sheet" id="pnPresets" hidden role="dialog" aria-label="Presets">
+  <div class="pn-grab"></div>
+  <div class="pn-sh-h"><h3>Presets</h3><button type="button" class="pn-x" data-close aria-label="Close">${IC.x}</button></div>
+  <div class="pn-chips" id="pnChips"></div>
+  <form class="pn-save" id="pnSave" hidden><input id="pnSaveName" maxlength="28" placeholder="Name this setup" aria-label="Preset name"><button type="submit">Save</button></form>
+  <div class="pn-tg" id="pnTg"></div>
+  <div class="pn-sub">Also in here</div>
+  <div class="pn-links" id="pnLinks"></div>
+</section>
+<div class="pn-ui pn-fade"></div>
+<div class="pn-ui pn-float">
+  <button type="button" class="pn-glass" data-k="sides">${IC.sides}<span>Sides</span></button>
+  <button type="button" class="pn-recbtn" data-k="recbig" aria-label="Record"><span class="pn-recbig"><i></i></span></button>
+  <button type="button" class="pn-glass" data-k="menu">${IC.menu}<span>Menu</span></button>
+</div>
+<section class="pn-ui pn-menu" id="pnMenu" hidden role="dialog" aria-label="Menu"><div id="pnMenuList"></div>
+  <button type="button" class="pn-glass pn-close" data-close>${IC.x}<span>Close</span></button>
+</section>`;
+document.body.appendChild(host);
+
+/* 4: tabs at the top, under the top bar */
+const top = document.createElement("div");
+top.className = "pn-ui pn-top";
+top.innerHTML = `<div class="in"><button type="button" data-k="sides">${IC.sides}Sides</button><button type="button" data-k="rec"><span class="pn-recdot"></span>Record</button><button type="button" data-k="settings">${IC.gear}Setup</button></div>`;
+$(".apptop").after(top);
+const setTopH = () => root.style.setProperty("--pn-top", $(".apptop").offsetHeight + "px");
+addEventListener("resize", setTopH); setTopH();
+
+/* 2 and 4: the Settings / Setup page lives with the other pages */
+const main = $("#setup .col-main");
+const back = document.createElement("button");
+back.type = "button"; back.className = "pn-back"; back.innerHTML = IC.back + "Settings";
+back.onclick = () => window.goPage("settings");
+main.prepend(back);
+const setCard = document.createElement("section");
+setCard.className = "pn-set"; setCard.dataset.page = "settings";
+main.appendChild(setCard);
+const GROUPS = [["Your audition", ["sheet", "rehearse", "takes", "send"]], ["Your setup", ["reader", "camera", "prompter", "library", "look"]]];
+let setHTML = "";
+function renderSet(){
+  const h = `<h2 class="pn-ttl">Settings</h2>` + GROUPS.map(([g, ks]) => `<div class="pn-grp">${g}</div><div class="pn-list">` +
+    ks.map(k => `<button type="button" class="pn-li" data-go2="${k}"><span class="ib${k === "send" ? " pn-red" : ""}">${IC[k]}</span><b>${NAME[k]}</b><span>${esc(val(k))}</span>${IC.chev}</button>`).join("") + `</div>`).join("");
+  if (h !== setHTML){ setHTML = h; setCard.innerHTML = h; }
+}
+/* 4: fold-open sections that show the real settings cards right under their heading */
+const FOLDS = [["camera", "Camera and prompter", ["camCard", "qualityCard"]], ["reader", "Reader", ["readerCard"]], ["sheet", "Audition sheet", ["helloCard"]],
+  ["rehearse", "Rehearse", ["rhCard"]], ["takes", "Your takes", null], ["library", "Library", ["libCard"]], ["look", "Look", null]];
+const foldTitle = document.createElement("div");
+foldTitle.className = "pn-fold pn-ttlrow"; foldTitle.dataset.page = "settings"; foldTitle.innerHTML = `<h2 class="pn-ttl">Setup</h2>`;
+main.appendChild(foldTitle);
+let openFold = store.get("tm.fold") || "";
+const foldEls = FOLDS.map(([k, label, cards], i) => {
+  const d = document.createElement("div");
+  d.className = "pn-fold"; d.dataset.page = "settings"; d.dataset.fold = k; d.style.order = (i + 1) * 10;
+  d.innerHTML = `<button type="button" class="h" aria-expanded="false">${IC[k]}<b>${label}</b><span></span>${cards ? IC.down : IC.chev}</button>`;
+  d.querySelector(".h").onclick = () => {
+    if (!cards){ if (k === "takes") window.goPage("takes"); else go(k); return; }
+    openFold = openFold === k ? "" : k; store.set("tm.fold", openFold); renderFolds();
+  };
+  main.appendChild(d); return d;
+});
+foldTitle.style.order = 1;
+const foldSend = document.createElement("button");
+foldSend.type = "button"; foldSend.className = "btn sendred pn-foldsend"; foldSend.dataset.page = "settings"; foldSend.style.order = 999;
+foldSend.innerHTML = IC.send + "Send to agent";
+foldSend.onclick = () => go("send");
+main.appendChild(foldSend);
+function renderFolds(){
+  FOLDS.forEach(([k, , cards], i) => {
+    const d = foldEls[i], open = openFold === k && !!cards;
+    d.classList.toggle("open", open);
+    d.querySelector(".h").setAttribute("aria-expanded", String(open));
+    d.querySelector(".h span").textContent = val(k === "camera" ? "camera" : k);
+    (cards || []).forEach((id, j) => { const c = $("#" + id); if (!c) return; c.classList.toggle("pn-show", open); c.style.order = open ? (i + 1) * 10 + j + 1 : ""; });
+  });
+}
+
+/* 1: toolkit tiles */
+const TILES = ["sheet", "rehearse", "takes", "reader", "camera", "prompter", "library", "look", "send"];
+function renderTiles(){
+  const h = TILES.map(k => `<button type="button" class="pn-tile${k === "send" ? " pn-red" : ""}" data-go2="${k}">${IC[k]}<b>${NAME[k]}</b><span>${esc(val(k))}</span></button>`).join("");
+  if (renderTiles.h !== h){ renderTiles.h = h; $("#pnTiles").innerHTML = h; }
+}
+/* 5: the full-screen menu */
+function renderMenu(){
+  const row = k => `<button type="button" class="pn-mi${k === "send" ? " red" : ""}" data-go2="${k}">${IC[k]}${NAME[k]}<small>${esc(k === "send" ? "" : val(k))}</small></button>`;
+  $("#pnMenuList").innerHTML = `<div class="pn-sub">Before you tape</div>` + ["sheet", "rehearse", "reader", "camera", "prompter"].map(row).join("")
+    + `<div class="pn-sub">After</div>` + ["takes", "library", "send"].map(row).join("") + `<div class="pn-sub">Your app</div>` + row("look");
+}
+
+/* 3: presets and quick switches */
+const KEYS = {reader: "#readerWho", facing: "#facing", prompt: "#prompt", tail: "#tail"};   /* quality stays where it is: 720p keeps every file under 100 MB */
+const DEFAULT_PRESETS = [
+  {name: "Home self-tape", s: {reader: "app", facing: "user", prompt: "all", tail: "3"}},
+  {name: "Reader in the room", s: {reader: "room", facing: "environment", prompt: "none", tail: "3"}},
+  {name: "Quick slate", s: {reader: "app", facing: "user", prompt: "none", tail: "0"}}
+];
+const loadPresets = () => { try { const p = JSON.parse(store.get("tm.presets") || "null"); if (Array.isArray(p)) return p; } catch(e){} return DEFAULT_PRESETS.slice(); };
+let presets = loadPresets();
+const now = () => Object.fromEntries(Object.entries(KEYS).map(([k, q]) => [k, pv(q)]));
+const setV = (k, v) => { const b = $(`${KEYS[k]} [data-v="${v}"]`); if (b && !b.disabled) b.click(); };
+const same = s => { const n = now(); return Object.keys(s).every(k => String(s[k]) === String(n[k])); };
+function renderPresets(){
+  $("#pnChips").innerHTML = presets.map((p, i) => `<button type="button" class="pn-chip${same(p.s) ? " on" : ""}" data-p="${i}">${same(p.s) ? "✓ " : ""}${esc(p.name)}${p.custom ? `<span class="del" data-del="${i}" aria-label="Delete ${esc(p.name)}">×</span>` : ""}</button>`).join("")
+    + `<button type="button" class="pn-chip ghost" data-psave>${IC.plus.replace('class="i"', 'class="i" style="width:14px;height:14px"')}Save</button>`;
+  const TG = [
+    ["reader", IC.reader, "Reader", val("reader"), pv("#readerWho") === "room"],
+    ["facing", IC.camera, "Camera", val("camera"), true],
+    ["prompt", IC.prompter, "Prompter", val("prompter"), pv("#prompt") !== "none"],
+    ["tail", IC.timer, "After the last line", val("tail"), pv("#tail") === "3"]
+  ];
+  $("#pnTg").innerHTML = TG.map(([k, ic, lab, v, on]) => `<button type="button" class="pn-tgl${on ? " on" : ""}" data-cyc="${k}">${`<span class="r">${ic}<em>Tap to change</em></span>`}<small>${lab}</small><b>${esc(v)}</b></button>`).join("");
+  $("#pnLinks").innerHTML = ["sheet", "rehearse", "takes", "library", "look"].map(k => `<button type="button" data-go2="${k}">${IC[k]}${NAME[k]}</button>`).join("")
+    + `<button type="button" class="pn-red" data-go2="send">${IC.send}Send to agent</button>`;
+}
+const CYCLE = {reader: ["app", "room"], facing: ["user", "environment"], prompt: ["all", "cues", "none"], tail: ["3", "0"]};
+$("#pnPresets").addEventListener("click", e => {
+  const del = e.target.closest("[data-del]");
+  if (del){ e.stopPropagation(); presets.splice(+del.dataset.del, 1); store.set("tm.presets", JSON.stringify(presets)); renderPresets(); return; }
+  const c = e.target.closest("[data-p]");
+  if (c){ const p = presets[+c.dataset.p]; Object.entries(p.s).forEach(([k, v]) => setV(k, v)); renderPresets(); return; }
+  if (e.target.closest("[data-psave]")){ const f = $("#pnSave"); f.hidden = !f.hidden; if (!f.hidden) $("#pnSaveName").focus(); return; }
+  const y = e.target.closest("[data-cyc]");
+  if (y){ const k = y.dataset.cyc, l = CYCLE[k], i = l.indexOf(pv(KEYS[k])); setV(k, l[(i + 1) % l.length]); renderPresets(); }
+});
+$("#pnSave").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("#pnSaveName").value.trim(); if (!name) return;
+  presets.push({name, s: now(), custom: true}); store.set("tm.presets", JSON.stringify(presets));
+  $("#pnSaveName").value = ""; $("#pnSave").hidden = true; renderPresets();
+});
+
+/* ---------- open / close the drawers ---------- */
+const PANELS = {toolkit: "#pnToolkit", presets: "#pnPresets", menu: "#pnMenu"};
+function closeAll(){ Object.values(PANELS).forEach(q => $(q).hidden = true); $("#pnDim").hidden = true; markOn(); }
+function openPanel(k){
+  const was = !$(PANELS[k]).hidden; closeAll(); if (was) return;
+  if (k === "toolkit"){ renderTiles.h = ""; renderTiles(); } if (k === "presets") renderPresets(); if (k === "menu") renderMenu();
+  $(PANELS[k]).hidden = false; if (k !== "menu") $("#pnDim").hidden = false;
+  markOn(k);
+}
+$("#pnDim").onclick = closeAll;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeAll(); });
+/* swipe a drawer down to close it */
+$$(".pn-sheet").forEach(sh => {
+  let y0 = null;
+  sh.addEventListener("touchstart", e => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; }, {passive: true});
+  sh.addEventListener("touchmove", e => { if (y0 === null) return; const dy = e.touches[0].clientY - y0; sh.style.transform = dy > 0 ? `translateY(${dy}px)` : ""; }, {passive: true});
+  sh.addEventListener("touchend", e => { if (y0 === null) return; const dy = (e.changedTouches[0] || {}).clientY - y0; sh.style.transform = ""; y0 = null; if (dy > 70) closeAll(); });
+});
+
+/* one click handler for every button this adds */
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go2]"); if (g && g.closest(".pn-host, .pn-set")){ go(g.dataset.go2); return; }
+  if (e.target.closest(".pn-host [data-close]")){ closeAll(); return; }
+  const b = e.target.closest(".pn-bar [data-k], .pn-float [data-k], .pn-top [data-k]"); if (!b) return;
+  const k = b.dataset.k;
+  if (k === "sides"){ closeAll(); window.goPage("sides"); }
+  else if (k === "recbig") record(true);
+  else if (k === "rec") record(false);
+  else if (k === "settings"){ closeAll(); window.goPage("settings"); }
+  else openPanel(k);
+});
+
+/* which button is lit */
+function markOn(panel){
+  const p = root.dataset.page;
+  const third = p !== "sides" && p !== "takes";
+  $$(".pn-bar [data-k], .pn-float [data-k], .pn-top [data-k]").forEach(b => {
+    const k = b.dataset.k;
+    const on = panel ? k === panel : (k === "sides" && p === "sides") || ((k === "rec" || k === "recbig") && p === "takes") || ((k === "settings" || k === "toolkit" || k === "presets" || k === "menu") && third);
+    b.classList.toggle("on", on);
+  });
+}
+new MutationObserver(() => {
+  markOn();
+  if (root.dataset.page === "settings"){ renderSet(); renderFolds(); }
+}).observe(root, {attributes: true, attributeFilter: ["data-page"]});
+/* leaving the phone size while on the Settings page: go home, the sidebar has no Settings button */
+PHONE.addEventListener("change", () => { if (!PHONE.matches && root.dataset.page === "settings") window.goPage("sheet"); setTopH(); });
+/* never during a take */
+new MutationObserver(() => { if (!$("#stage").hidden) closeAll(); }).observe($("#stage"), {attributes: true, attributeFilter: ["hidden"]});
+/* keep open lists fresh while settings change */
+setInterval(() => {
+  if (!$("#pnToolkit").hidden) renderTiles();
+  if (root.dataset.page === "settings" && PHONE.matches){ renderSet(); renderFolds(); }
+}, 1500);
+
+/* ---------- the picker, under the theme button ---------- */
+const MINI = {
+  toolkit: '<rect x="2" y="2" width="30" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6" y="9" width="22" height="3" rx="1.5" fill="currentColor" opacity=".25"/><rect x="6" y="15" width="22" height="16" rx="2" fill="currentColor" opacity=".12"/><rect x="5" y="38" width="24" height="8" rx="4" fill="currentColor" opacity=".18"/><circle cx="17" cy="38" r="4.5" fill="var(--rec)" stroke="currentColor" stroke-width="1.2"/>',
+  tabs: '<rect x="2" y="2" width="30" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6" y="9" width="22" height="4" rx="1.5" fill="currentColor" opacity=".25"/><rect x="6" y="16" width="22" height="3" rx="1" fill="currentColor" opacity=".15"/><rect x="6" y="21" width="22" height="3" rx="1" fill="currentColor" opacity=".15"/><rect x="6" y="26" width="22" height="3" rx="1" fill="currentColor" opacity=".15"/><rect x="5" y="39" width="24" height="7" rx="3" fill="currentColor" opacity=".18"/><rect x="13" y="39" width="8" height="7" rx="2" fill="var(--accent)"/>',
+  presets: '<rect x="2" y="2" width="30" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="14" width="24" height="22" rx="3" fill="currentColor" opacity=".16"/><rect x="7" y="17" width="9" height="3" rx="1.5" fill="var(--accent)"/><rect x="18" y="17" width="9" height="3" rx="1.5" fill="currentColor" opacity=".35"/><rect x="7" y="23" width="9" height="10" rx="2" fill="currentColor" opacity=".25"/><rect x="18" y="23" width="9" height="10" rx="2" fill="currentColor" opacity=".25"/><rect x="5" y="39" width="24" height="7" rx="3" fill="currentColor" opacity=".18"/>',
+  top: '<rect x="2" y="2" width="30" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="8" width="24" height="6" rx="2.5" fill="currentColor" opacity=".18"/><rect x="13" y="8" width="8" height="6" rx="2" fill="var(--accent)"/><rect x="6" y="18" width="22" height="5" rx="1.5" fill="currentColor" opacity=".15"/><rect x="6" y="25" width="22" height="5" rx="1.5" fill="currentColor" opacity=".15"/><rect x="6" y="32" width="22" height="5" rx="1.5" fill="currentColor" opacity=".15"/>',
+  float: '<rect x="2" y="2" width="30" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6" y="9" width="22" height="24" rx="2" fill="currentColor" opacity=".12"/><circle cx="9" cy="41" r="3" fill="currentColor" opacity=".3"/><circle cx="25" cy="41" r="3" fill="currentColor" opacity=".3"/><circle cx="17" cy="41" r="5" fill="var(--rec)" stroke="currentColor" stroke-width="1.2"/>'
+};
+const pick = document.createElement("div");
+pick.className = "pn-pick";
+pick.innerHTML = `<h3>Buttons on your phone</h3><div class="pn-opts">` + NAVS.map(n => `<button type="button" class="pn-opt" data-nav="${n.id}" aria-pressed="false"><svg viewBox="0 0 34 52" aria-hidden="true">${MINI[n.id]}</svg><span><b>${n.name}</b><small>${n.sub}</small></span></button>`).join("")
+  + `</div><p class="pn-note">Shows on phones, and in a narrow window on a computer. TapeMate remembers the one you pick.</p>`;
+$("#themePop").appendChild(pick);
+const th = $("#themePop h3"); if (th) th.textContent = "Theme";
+$("#themeBtn").title = "Change theme and buttons";
+function applyNav(id, fromUser){
+  if (!NAVS.some(n => n.id === id)) id = "toolkit";
+  closeAll();
+  root.setAttribute("data-nav", id);
+  pick.querySelectorAll(".pn-opt").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.nav === id)));
+  if (fromUser) store.set("tm.nav", id);
+  if (root.dataset.page === "settings"){ renderSet(); renderFolds(); }
+  markOn(); setTopH();
+}
+pick.addEventListener("click", e => { const b = e.target.closest(".pn-opt"); if (b){ e.stopPropagation(); applyNav(b.dataset.nav, true); } });
+applyNav(store.get("tm.nav") || "toolkit", false);
+window.__tmNav = {apply: id => applyNav(id, true), list: NAVS.map(n => n.id), open: openPanel, close: closeAll};
 })();
 </script>
 </body>
